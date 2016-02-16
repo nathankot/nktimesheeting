@@ -21,6 +21,7 @@ library
                      Model
                      Model.Extension
                      Model.User
+                     Model.Entry
                      Model.ApiKey
                      Settings
                      Settings.StaticFiles

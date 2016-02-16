@@ -4,6 +4,13 @@ User json
     UniqueUser email
   deriving Typeable
 
+Entry json
+    userId UserId
+    start UTCTime
+    end UTCTime
+    note Text
+  deriving Show
+
 ApiKey json
     value Text
     userId UserId
