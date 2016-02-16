@@ -1,11 +1,11 @@
 module Foundation where
 
 import Import.NoFoundation
-import Control.Monad.Trans.Maybe (MaybeT (..))
 import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Text.Jasmine         (minifym)
 import Yesod.Default.Util   (addStaticContentExternal)
 import Yesod.Core.Types     (Logger)
+import qualified Handler.Auth as Auth
 import qualified Yesod.Core.Unsafe as Unsafe
 
 -- | The foundation datatype for your application. This can be a good place to
@@ -69,8 +69,9 @@ instance Yesod App where
     isAuthorized RobotsR _ = return Authorized
     isAuthorized SessionsR _ = return Authorized
     isAuthorized UsersR _ = return Authorized
-    -- Default to Authorized for now.
-    isAuthorized _ _ = isUser
+    isAuthorized (EntryR entryId) isWrite = Auth.authEntry entryId isWrite
+    -- By default check that we have a user
+    isAuthorized _ _ = Auth.isUser
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
@@ -100,11 +101,6 @@ instance Yesod App where
 
     makeLogger = return . appLogger
 
-isUser :: Handler AuthResult
-isUser = do
-  muid <- cachedMaybeAuthenticatedUserId
-  return $ maybe AuthenticationRequired (const Authorized) muid
-
 -- How to run database actions.
 instance YesodPersist App where
     type YesodPersistBackend App = SqlBackend
@@ -127,30 +123,3 @@ instance HasHttpManager App where
 
 unsafeHandler :: App -> Handler a -> IO a
 unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
-
--- Note: Some functionality previously present in the scaffolding has been
--- moved to documentation in the Wiki. Following are some hopefully helpful
--- links:
---
--- https://github.com/yesodweb/yesod/wiki/Sending-email
--- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
--- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
-
-newtype CachedAuthenticatedUserId = CachedAuthenticatedUserId
-    { unCachedAuthenticatedUserId :: Maybe UserId }
-    deriving Typeable
-
--- | Retrieve a cached version of our authenticated user's id.
-cachedMaybeAuthenticatedUserId :: Handler (Maybe UserId)
-cachedMaybeAuthenticatedUserId = fmap unCachedAuthenticatedUserId $
-                                 cached $
-                                 fmap CachedAuthenticatedUserId
-                                 maybeAuthenticatedUserId
-  where
-    maybeAuthenticatedUserId = runMaybeT $ do
-      now <- liftIO getCurrentTime
-      s <- MaybeT $ lookupHeader hAuthorization
-      token <- MaybeT $ return $ stripPrefix "Bearer " s
-      Entity _ a <- MaybeT $ runDB $ getBy $ UniqueApiKey (decodeUtf8 token)
-      unless (apiKeyExpires a > now) $ MaybeT $ return Nothing
-      return $ apiKeyUserId a

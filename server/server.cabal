@@ -27,6 +27,8 @@ library
                      Settings.StaticFiles
                      Handler.Extension
                      Handler.Common
+                     Handler.Auth
+                     Handler.Cache
                      Handler.Users
                      Handler.Sessions
                      Handler.Entries

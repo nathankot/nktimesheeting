@@ -10,7 +10,6 @@ module Handler.Extension
        ) where
 
 import ClassyPrelude.Yesod
-import Foundation
 import Import.NoFoundation
 import Model.Extension
 import Data.Aeson as A
@@ -77,6 +76,3 @@ fromMaybeM e h = do
   case h' of
     Just a -> return a
     Nothing -> e
-
-requireCachedAuthenticatedUserId :: Handler UserId
-requireCachedAuthenticatedUserId = fromMaybeM notAuthenticated cachedMaybeAuthenticatedUserId
