@@ -55,6 +55,12 @@ module.exports = {
       }
     ]
   },
+  sassLoader: {
+    includePaths: [
+      path.resolve(__dirname, "../src/bourbon/bourbon"),
+      path.resolve(__dirname, "../src/neat/neat")
+    ]
+  },
   eslint: {
     formatter: require('eslint-friendly-formatter')
   }

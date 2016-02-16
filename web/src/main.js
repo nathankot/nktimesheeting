@@ -1,8 +1,18 @@
 import Vue from 'vue'
-import App from './App'
+import Router from 'vue-router'
+import Resource from 'vue-resource'
+import App from './components/app'
+import Hello from './components/app'
 
-/* eslint-disable no-new */
-new Vue({
-  el: 'body',
-  components: { App }
+Vue.use(Router)
+Vue.use(Resource)
+
+const router = new Router()
+
+router.beforeEach(() => window.scrollTo(0, 0))
+router.redirect({ '*': '/' })
+router.map({
+  '/': { component: Hello }
 })
+
+router.start(App, '#app')
