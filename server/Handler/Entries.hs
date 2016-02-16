@@ -19,8 +19,9 @@ getEntriesR = do
 postEntriesR :: Handler Value
 postEntriesR = do
   uid <- requireCachedAuthenticatedUserId
-  RequestView entry <- requireJsonEntity [ "userId" .= uid ] entryWhitelist
-                       :: Handler (RequestView  Entry)
+  RequestView entry <- requireJsonEntity [ "userId" .= uid ]
+                       (whitelist  entryWhitelist)
+                    :: Handler (RequestView  Entry)
 
   let (isvalid, errors) = validate entry
   unless isvalid $ invalidArgsI errors

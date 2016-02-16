@@ -15,6 +15,9 @@ instance ToJSON (ResponseView (Entity Entry)) where
 instance Validatable Entry where
   validations e = [ ((entryEnd e) > (entryStart e), MsgEntryEndDateEarlierThanStart) ]
 
+instance Updatable Entry where
+  updatableProps _ = entryWhitelist
+
 -- | Writable properties that handlers should respect.
-entryWhitelist :: Maybe [Text]
-entryWhitelist = whitelist ["start", "end", "note"]
+entryWhitelist :: [Text]
+entryWhitelist = ["start", "end", "note"]
