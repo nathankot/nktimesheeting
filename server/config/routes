@@ -3,5 +3,6 @@
 
 /api/users     UsersR POST
 /api/sessions  SessionsR POST DELETE
+/api/entries   EntriesR GET POST
 
 /              StaticR Static appStatic

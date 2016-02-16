@@ -29,6 +29,7 @@ library
                      Handler.Common
                      Handler.Users
                      Handler.Sessions
+                     Handler.Entries
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -117,6 +118,7 @@ test-suite test
     other-modules:  Handler.CommonSpec
                     Handler.SessionsSpec
                     Handler.UsersSpec
+                    Handler.EntriesSpec
                     TestExtension
                     TestFactory
                     TestImport
@@ -163,3 +165,5 @@ test-suite test
                  , containers
                  , blaze-builder
                  , yesod-auth
+                 , time
+                 , yesod-persistent
