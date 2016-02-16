@@ -1,8 +1,9 @@
-/favicon.ico   FaviconR GET
-/robots.txt    RobotsR GET
+/favicon.ico           FaviconR GET
+/robots.txt            RobotsR GET
 
-/api/users     UsersR POST
-/api/sessions  SessionsR POST DELETE
-/api/entries   EntriesR GET POST
+/api/users             UsersR POST
+/api/sessions          SessionsR POST DELETE
+/api/entries           EntriesR GET POST
+/api/entries/#EntryId  EntryR PATCH DELETE
 
-/              StaticR Static appStatic
+/                      StaticR Static appStatic
