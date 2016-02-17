@@ -1,6 +1,7 @@
 <template>
   <timesheet-list-view
       :entries="entries"
+      :on-delete-request="deleteEntry"
   ></timesheet-list-view>
 
   <h2>New entry</h2>
@@ -8,6 +9,7 @@
 </template>
 
 <script>
+ import _ from 'underscore'
  import Rx from 'rx'
  import Api from 'api'
  import TimesheetListView from './timesheetListView'
@@ -26,6 +28,14 @@
    methods: {
      onNewEntry (entry) {
        this.entries.push(entry)
+     },
+
+     deleteEntry (entry) {
+       this.disposable.add(
+         Api.entries.delete({ id: entry.id }).rx()
+            .subscribeOnNext(() => {
+              this.entries = _.filter(this.entries, (e) => e.id !== entry.id)
+            }))
      },
 
      retrieve () {

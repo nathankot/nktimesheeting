@@ -6,6 +6,7 @@
           <th>Start</th>
           <th>End</th>
           <th>Notes</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -13,6 +14,7 @@
           <td>{{ moment.utc(entry.start).format(shortDateFormat) }}</td>
           <td>{{ moment.utc(entry.end).format(shortDateFormat) }}</td>
           <td>{{ entry.note }}</td>
+          <td><a @click="onDeleteRequest(entry)">Remove</a></td>
         </tr>
       </tbody>
     </table>
@@ -26,7 +28,8 @@
 
  export default {
    props: {
-     entries: { required: true, type: Array, default () { return [] } }
+     onDeleteRequest: { type: Function, default () { return _.noop } },
+     entries: { required: true, type: Array }
    },
    data () {
      return {
