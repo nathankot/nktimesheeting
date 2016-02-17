@@ -9,7 +9,11 @@ var request = require('request');
 // proxy api requests to the server running on 3000
 app.use(function (req, res, next) {
   if (req.url.match(/^\/api\//) !== null ) {
-    request("http://localhost:3000" + req.url).pipe(res);
+    request({
+      url: "http://localhost:3000" + req.url,
+      method: req.method,
+      headers: req.headers
+    }).pipe(res);
   } else {
     next()
   }
