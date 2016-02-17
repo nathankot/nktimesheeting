@@ -6,6 +6,7 @@
 </template>
 
 <script>
+ import Rx from 'rx'
  import _ from 'underscore'
  import Api, { getError } from 'api'
  import Store from 'store'
@@ -30,7 +31,8 @@
    },
    data () {
      return {
-       error: ''
+       error: '',
+       disposable: new Rx.CompositeDisposable()
      }
    },
    computed: {
@@ -40,15 +42,19 @@
    methods: {
      submit () {
        this.error = null
-       Api.users[this.isRegister ? 'save' : 'update'](this.user).rx()
-          .doOnNext((res) => {
-            if (this.isRegister) {
-              Store.currentUser.onNext(res.data.user)
-            }
-          })
-         .subscribeOnError((res) => this.error = getError(res))
+       this.disposable.add(
+         Api.users[this.isRegister ? 'save' : 'update'](this.user).rx()
+            .doOnNext((res) => {
+              if (this.isRegister) {
+                Store.currentUser.onNext(res.data.user)
+              }
+            })
+            .subscribeOnError((res) => this.error = getError(res)))
      }
    },
-   components: { ErrorMessage }
+   components: { ErrorMessage },
+   beforeDestroy () {
+     this.disposable.dispose()
+   }
  }
 </script>

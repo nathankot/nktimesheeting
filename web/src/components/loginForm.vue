@@ -6,6 +6,7 @@
 </template>
 
 <script>
+ import Rx from 'rx'
  import Store from 'store'
  import Api, { getError } from 'api'
  import _ from 'underscore'
@@ -15,6 +16,7 @@
  export default {
    data () {
      return {
+       disposable: new Rx.CompositeDisposable(),
        email: '',
        password: '',
        error: null
@@ -26,13 +28,17 @@
    methods: {
      submit () {
        this.error = null
-       Api.sessions
+       this.disposable.add(
+        Api.sessions
           .save({ email: this.email, password: this.password })
           .rx()
           .doOnNext(r => Store.currentUser.onNext(r.data.user))
-          .subscribeOnError(r => { this.error = getError(r) })
+          .subscribeOnError(r => { this.error = getError(r) }))
      }
    },
-   components: { ErrorMessage }
+   components: { ErrorMessage },
+   beforeDestroy () {
+     this.disposable.dispose()
+   }
  }
 </script>
