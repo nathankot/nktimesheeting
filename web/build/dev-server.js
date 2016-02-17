@@ -4,6 +4,16 @@ var config = require('./webpack.dev.conf')
 
 var app = express()
 var compiler = webpack(config)
+var request = require('request');
+
+// proxy api requests to the server running on 3000
+app.use(function (req, res, next) {
+  if (req.url.match(/^\/api\//) !== null ) {
+    request("http://localhost:3000" + req.url).pipe(res);
+  } else {
+    next()
+  }
+})
 
 // handle fallback for HTML5 history API
 app.use(require('connect-history-api-fallback')())
