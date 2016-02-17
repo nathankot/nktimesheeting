@@ -1,39 +1,33 @@
 import _ from 'underscore'
 import Rx from 'rx'
-import moment from 'moment-timezone'
 
 // One of two evils:
 // store auth in cookie = CSRF
 // store auth in localStorage = XSS
 const localStorage = window.localStorage
 
-var initialUser =
-    (localStorage && localStorage.getItem('user')) ||
-    null
+var initialUser
 
-var initialTimezone =
-    (localStorage && localStorage.getItem('timezone')) ||
-    moment.tz.guess()
+try {
+  initialUser = (
+    localStorage &&
+    localStorage.getItem('user') &&
+    JSON.parse(localStorage.getItem('user'))) || null
+} catch (_) {
+  initialUser = null
+}
 
 const store = {
   isLoggedIn: false,
-  currentUser: new Rx.BehaviorSubject(initialUser),
-  timezone: new Rx.BehaviorSubject(initialTimezone)
+  currentUser: new Rx.BehaviorSubject(initialUser)
 }
 
 store.currentUser
   .subscribeOnNext(u => {
     store.isLoggedIn = !!u
     if (localStorage) {
-      localStorage.setItem('user', u)
+      localStorage.setItem('user', JSON.stringify(u))
       _.isEmpty(u) && localStorage.removeItem('user')
-    }
-  })
-
-store.timezone
-  .subscribeOnNext(z => {
-    if (localStorage) {
-      localStorage.setItem('timezone', z)
     }
   })
 

@@ -9,7 +9,7 @@
     "test": "karma start build/karma.conf.js --single-run"
   },
   "dependencies": {
-    "moment-timezone": "^0.5.0",
+    "moment": "^2.11.2",
     "rx": "^4.0.8",
     "underscore": "^1.8.3",
     "vue": "^1.0.16",
