@@ -254,7 +254,7 @@
         ready () {
             this.now = this.parse(this.value) || new Date();
             document.addEventListener('click', (e) => {
-                if (!this.$el.contains(e.target)) {
+                if (!this.$el || !this.$el.contains(e.target)) {
                     this.close();
                 }
             }, false);
