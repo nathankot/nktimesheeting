@@ -62,9 +62,8 @@
        Store.timezone.onNext(z)
      },
      logout () {
-       this.disposable.add(
-         Api.sessions.delete().rx()
-            .subscribeOnNext(() => Store.currentUser.onNext(null)))
+       Store.currentUser.onNext(null)
+       Api.sessions.delete()
      }
    },
 
