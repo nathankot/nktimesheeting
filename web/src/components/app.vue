@@ -5,7 +5,12 @@
 </template>
 
 <style lang="sass">
-body {
-  font-family: Helvetica, sans-serif;
-}
+ body {
+   font-family: Helvetica, sans-serif;
+ }
+
+ a {
+   color: #2CA039;
+   cursor: pointer;
+ }
 </style>

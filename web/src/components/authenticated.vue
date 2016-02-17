@@ -1,4 +1,10 @@
 <template>
-  <div class="header">
-  </div>
+  <user-header></user-header>
 </template>
+
+<script>
+ import UserHeader from './userHeader'
+ export default {
+   components: { UserHeader }
+ }
+</script>
