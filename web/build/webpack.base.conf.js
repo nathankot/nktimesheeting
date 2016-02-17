@@ -12,7 +12,10 @@ module.exports = {
   resolve: {
     extensions: ['', '.js', '.vue'],
     alias: {
-      'src': path.resolve(__dirname, '../src')
+      'src': path.resolve(__dirname, '../src'),
+      'rx': 'rx/dist/rx.all.js',
+      'api': path.resolve(__dirname, '../src/api.js'),
+      'store': path.resolve(__dirname, '../src/store.js')
     }
   },
   resolveLoader: {
