@@ -93,8 +93,15 @@
    },
    methods: {
      updateEntry () {
-       this.entry.start = moment(this.startDate + ' ' + this.startTime).utc().format(dateFormat)
-       this.entry.end = moment(this.endDate + ' ' + this.endTime).utc().format(dateFormat)
+       var start = moment(this.startDate + ' ' + this.startTime)
+       var end = moment(this.endDate + ' ' + this.endTime)
+       if (end.isBefore(start)) {
+         end = start.add(1, 'hour')
+         this.endDate = end.format('YYYY-MM-DD')
+         this.endTime = end.format('HH:mm')
+       }
+       this.entry.start = start.utc().format(dateFormat)
+       this.entry.end = end.utc().format(dateFormat)
      },
 
      submit () {
