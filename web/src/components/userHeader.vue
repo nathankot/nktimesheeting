@@ -12,6 +12,18 @@
         </ul>
       </div>
 
+      <div class="current-timezone">
+        <select
+            v-model="timezone"
+            @change="updateTimezone(timezone)">
+          <option
+              v-for="zone in availableTimezones"
+              :value="zone">
+            {{ zone }}
+          </option>
+        </select>
+      </div>
+
       <h1>nktimesheeting</h1>
     </div>
   </div>
@@ -22,12 +34,15 @@
  import Rx from 'rx'
  import Store from 'store'
  import Api from 'api'
+ import moment from 'moment-timezone'
 
  export default {
    data () {
      return {
        disposable: new Rx.CompositeDisposable(),
-       user: { email: '' }
+       user: { email: '' },
+       timezone: 'UTC',
+       availableTimezones: moment.tz.names()
      }
    },
 
@@ -35,13 +50,17 @@
      this.disposable.add(
        Store.currentUser
             .filter((u) => _.isObject(u))
-            .subscribeOnNext((u) => {
-              console.log(u)
-              this.user = u
-            }))
+            .subscribeOnNext((u) => this.user = u))
+
+     this.disposable.add(
+       Store.timezone.take(1)
+         .subscribeOnNext((z) => this.timezone = z))
    },
 
    methods: {
+     updateTimezone (z) {
+       Store.timezone.onNext(z)
+     },
      logout () {
        this.disposable.add(
          Api.sessions.delete().rx()
