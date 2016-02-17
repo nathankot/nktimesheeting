@@ -1,3 +1,4 @@
+import _ from 'underscore'
 import Rx from 'rx'
 import moment from 'moment-timezone'
 
@@ -25,6 +26,7 @@ store.currentUser
     store.isLoggedIn = !!u
     if (localStorage) {
       localStorage.setItem('user', u)
+      _.isEmpty(u) && localStorage.removeItem('user')
     }
   })
 
