@@ -1,5 +1,6 @@
 <template>
   <user-header></user-header>
+  <router-view></router-view>
 </template>
 
 <script>
