@@ -15,14 +15,11 @@
 
  export default {
    props: {
-     isRegister: {
-       type: Boolean,
-       default: true
-     },
      user: {
        type: Object,
        default () {
          return {
+           id: null,
            email: '',
            password: ''
          }
@@ -36,6 +33,7 @@
      }
    },
    computed: {
+     isRegister () { return _.isEmpty(this.user.id) },
      showError () { return !_.isEmpty(this.error) },
      submitButtonLabel () { return this.isRegister ? 'Register' : 'Update' }
    },

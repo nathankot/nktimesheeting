@@ -1,5 +1,5 @@
 <template>
-  <error-message v-show="showError">{{ error }}</error-message>
+  <error-message v-show="error">{{ error }}</error-message>
   <input v-model="email" type="email" placeholder="your@email.com" />
   <input v-model="password" type="password" placeholder="password" />
   <button @click="submit" class="submit">Login</button>
@@ -9,7 +9,6 @@
  import Rx from 'rx'
  import Store from 'store'
  import Api, { getError } from 'api'
- import _ from 'underscore'
 
  import ErrorMessage from './errorMessage'
 
@@ -21,9 +20,6 @@
        password: '',
        error: null
      }
-   },
-   computed: {
-     showError () { return !_.isEmpty(this.error) }
    },
    methods: {
      submit () {
