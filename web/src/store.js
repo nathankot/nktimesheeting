@@ -1,9 +1,8 @@
 import Rx from 'rx'
-// import _ from 'underscore'
 
 const store = {
   isLoggedIn: false,
-  currentUser: new Rx.Subject(null)
+  currentUser: new Rx.BehaviorSubject(null)
 }
 
 store.currentUser
