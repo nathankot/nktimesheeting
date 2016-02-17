@@ -2,9 +2,19 @@ import Vue from 'vue'
 import Resource from 'vue-resource'
 import Rx from 'rx'
 import _ from 'underscore'
+import Store from 'store'
 
 Vue.use(Resource)
 Vue.resource.actions.update = { method: 'PATCH' }
+
+Store.currentUser
+  .subscribeOnNext((user) => {
+    if (user && user.apiKey && user.apiKey.value) {
+      Vue.http.headers.common['Authorization'] = 'Bearer ' + user.apiKey.value
+    } else {
+      delete Vue.http.headers.common['Authorization']
+    }
+  })
 
 Vue.Promise.prototype.rx = function () {
   return Rx.Observable.fromPromise(this)
