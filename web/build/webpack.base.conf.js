@@ -15,7 +15,8 @@ module.exports = {
       'src': path.resolve(__dirname, '../src'),
       'rx': 'rx/dist/rx.all.js',
       'api': path.resolve(__dirname, '../src/api.js'),
-      'store': path.resolve(__dirname, '../src/store.js')
+      'store': path.resolve(__dirname, '../src/store.js'),
+      'config': path.resolve(__dirname, '../src/config.js')
     }
   },
   resolveLoader: {

@@ -37,5 +37,6 @@ export function getError (response) {
 
 export default {
   users: Vue.resource('api/users{/id}'),
-  sessions: Vue.resource('api/sessions')
+  sessions: Vue.resource('api/sessions'),
+  entries: Vue.resource('api/entries{/id}')
 }
