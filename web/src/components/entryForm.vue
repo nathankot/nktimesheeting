@@ -8,12 +8,13 @@
           placeholder="Start date"
           :value.sync="startDate"
           format="YYYY-MM-DD"
+          required
       ></datepicker>
     </div>
 
     <div class="field">
       <div class="label">Start time</div>
-      <input type="time" v-model="startTime" />
+      <input type="time" v-model="startTime" required />
     </div>
   </div>
 
@@ -24,12 +25,13 @@
           placeholder="End date"
           :value.sync="endDate"
           format="YYYY-MM-DD"
+          required
       ></datepicker>
     </div>
 
     <div class="field">
       <div class="label">End time</div>
-      <input type="time" v-model="endTime" />
+      <input type="time" v-model="endTime" required />
     </div>
   </div>
 
