@@ -2,12 +2,13 @@ import Rx from 'rx'
 // import _ from 'underscore'
 
 const store = {
+  isLoggedIn: false,
   currentUser: new Rx.Subject(null)
 }
 
 store.currentUser
   .subscribeOnNext(u => {
-    // Reset user-specific data on logout
+    store.isLoggedIn = !!u
   })
 
 export default store
