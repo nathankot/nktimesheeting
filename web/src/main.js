@@ -1,18 +1,18 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Resource from 'vue-resource'
-import App from './components/app'
-import Hello from './components/app'
 
 Vue.use(Router)
-Vue.use(Resource)
 
 const router = new Router()
 
-router.beforeEach(() => window.scrollTo(0, 0))
-router.redirect({ '*': '/' })
+import App from './components/app'
+import Authenticate from './components/authenticate'
+
 router.map({
-  '/': { component: Hello }
+  '/login': { component: Authenticate }
 })
+
+router.beforeEach(() => window.scrollTo(0, 0))
+router.redirect({ '*': '/login' })
 
 router.start(App, '#app')
