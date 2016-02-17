@@ -102,7 +102,7 @@
        this.disposable.add(
          Api.entries[this.isCreate ? 'save' : 'patch'](this.entry)
             .rx()
-            .doOnNext((r) => this.onSave(r))
+            .doOnNext((r) => this.onSave(r.data.entry))
             .subscribeOnError((r) => this.error = getError(r)))
      }
    },
