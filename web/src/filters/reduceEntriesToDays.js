@@ -24,7 +24,10 @@ export default function (entries) {
           }
         }
 
-        days[dayIden].notes.push(entry.note)
+        if (!_.isEmpty(entry.note)) {
+          days[dayIden].notes.push(entry.note)
+        }
+
         days[dayIden].seconds += moment.duration(
           moment.min(end, dayEnd)
             .diff(moment.max(start, dayStart)))
