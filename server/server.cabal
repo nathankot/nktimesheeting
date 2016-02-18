@@ -23,6 +23,7 @@ library
                      Model.User
                      Model.Entry
                      Model.ApiKey
+                     Model.Role
                      Settings
                      Settings.StaticFiles
                      Handler.Extension

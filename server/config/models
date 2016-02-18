@@ -1,6 +1,7 @@
 User json
     email Text
     password Text Maybe
+    roles Roles
     UniqueUser email
   deriving Typeable
 

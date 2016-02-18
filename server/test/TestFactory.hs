@@ -3,6 +3,7 @@ module TestFactory where
 import ClassyPrelude
 import Database.Persist.Sql (SqlPersistM)
 import Model
+import Model.Role
 import Database.Persist hiding (get)
 import Database.Persist.Sql (SqlBackend)
 import Data.Time.Clock (addUTCTime)
@@ -27,6 +28,7 @@ factoryUser :: (User -> User) -> -- ^ Chance to manipulate the user
 
 factoryUser transform = do
   let user = transform User { userPassword = Just "notapasswordhash"
-                            , userEmail    = "random@email.com" }
+                            , userEmail    = "random@email.com"
+                            , userRoles    = Roles [Common] }
   uid <- insert user
   return $ Entity uid user

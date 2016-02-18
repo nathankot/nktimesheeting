@@ -11,3 +11,4 @@ import Yesod.Core.Types      as Import (loggerSet)
 import Yesod.Default.Config2 as Import
 import Handler.Auth          as Import
 import Handler.Cache         as Import
+import Data.Int              as Import (Int8)

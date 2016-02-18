@@ -4,6 +4,7 @@ import Import
 import Data.Aeson
 import Model.User ()
 import Model.ApiKey
+import Model.Role
 import Handler.Sessions (SessionResponse (..))
 import Yesod.Auth.Email (saltPass)
 
@@ -26,7 +27,7 @@ postUsersR = do
   let (isValid, errors) = validate userreq
   unless isValid $ invalidArgsI errors
   salted <- liftIO . saltPass . userRequestPassword $ userreq
-  let u = User (userRequestEmail userreq) (Just salted)
+  let u = User (userRequestEmail userreq) (Just salted) $ Roles [Common]
   let (isValid', errors') = validate u
   unless isValid' $ invalidArgsI errors'
   uid <- fromMaybeM (invalidArgsI [MsgEmailTaken]) $ runDB (insertUnique u)
