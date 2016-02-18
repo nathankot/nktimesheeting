@@ -1,6 +1,29 @@
 <template>
+
+  <menu class="date-filter">
+    <div class="field">
+      <div class="label">From</div>
+      <datepicker
+          placeholder="Start date"
+          :value.sync="startDate"
+          format="YYYY-MM-DD"
+          required
+      ></datepicker>
+    </div>
+
+    <div class="field">
+      <div class="label">To</div>
+      <datepicker
+          placeholder="End date"
+          :value.sync="endDate"
+          format="YYYY-MM-DD"
+          required
+      ></datepicker>
+    </div>
+  </menu>
+
   <timesheet-list-view
-      :entries="entries"
+      :entries="filteredEntries"
       :on-delete-request="deleteEntry"
       :on-update-request="updateEntry"
   ></timesheet-list-view>
@@ -18,20 +41,29 @@
 <script>
  import _ from 'underscore'
  import Rx from 'rx'
+ import moment from 'moment'
  import Api from 'api'
  import TimesheetListView from './timesheetListView'
  import EntryForm from './entryForm'
+ import Datepicker from './datepicker'
 
  export default {
    data () {
      return {
        updatingEntry: undefined,
        disposable: new Rx.CompositeDisposable(),
-       entries: []
+       entries: [],
+       startDate: moment().startOf('day').format('YYYY-MM-DD'),
+       endDate: moment().endOf('day').format('YYYY-MM-DD')
      }
    },
-   ready () {
-     this.retrieve()
+   computed: {
+     filteredEntries () {
+       return _.filter(this.entries, (e) => {
+         return moment.utc(e.start).isAfter(moment(this.startDate).startOf('day')) &&
+                moment.utc(e.end).isBefore(moment(this.endDate).endOf('day'))
+       })
+     }
    },
    methods: {
      onNewEntry (entry) {
@@ -66,6 +98,7 @@
      this.retrieve()
    },
    components: { TimesheetListView,
-                 EntryForm }
+                 EntryForm,
+                 Datepicker }
  }
 </script>
