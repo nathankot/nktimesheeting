@@ -85,7 +85,7 @@
      }
    },
    computed: {
-     isCreate () { return _.isEmpty(this.entry.id) }
+     isCreate () { return !_.isNumber(this.entry.id) }
    },
    watch: {
      startDate: 'updateEntry',
@@ -109,7 +109,9 @@
      submit () {
        this.error = null
        this.disposable.add(
-         Api.entries[this.isCreate ? 'save' : 'patch'](this.entry)
+         (this.isCreate
+        ? Api.entries.save(this.entry)
+        : Api.entries.update({ id: this.entry.id }, this.entry))
             .rx()
             .doOnNext((r) => this.onSave(r.data.entry))
             .subscribeOnError((r) => this.error = getError(r)))
