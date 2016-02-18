@@ -5,14 +5,16 @@
         <tr>
           <th>Start</th>
           <th>End</th>
+          <th>Duration</th>
           <th>Notes</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         <tr class="entry" v-for="entry in entries">
-          <td>{{ moment.utc(entry.start).format(shortDateFormat) }}</td>
-          <td>{{ moment.utc(entry.end).format(shortDateFormat) }}</td>
+          <td>{{ moment.utc(entry.start).local().format(shortDateFormat) }}</td>
+          <td>{{ moment.utc(entry.end).local().format(shortDateFormat) }}</td>
+          <td>{{ moment.duration(moment(entry.end).diff(moment(entry.start))).humanize() }}</td>
           <td>{{ entry.note }}</td>
           <td>
             <a @click="onUpdateRequest(entry)">Edit</a>
