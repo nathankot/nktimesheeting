@@ -13,7 +13,7 @@ module.exports = {
     extensions: ['', '.js', '.vue'],
     alias: {
       'src': path.resolve(__dirname, '../src'),
-      'rx': 'rx/dist/rx.all.js',
+      'rx': 'rx/dist/rx.lite.js',
       'api': path.resolve(__dirname, '../src/api.js'),
       'store': path.resolve(__dirname, '../src/store.js'),
       'config': path.resolve(__dirname, '../src/config.js')
