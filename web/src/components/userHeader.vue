@@ -7,6 +7,7 @@
       
       <div class="account-menu">
         <ul>
+          <li><a v-link="{ path: '/timesheet' }">timesheet</a></li>
           <li><a v-link="{ path: '/settings' }">settings</a></li>
           <li><a @click="logout">logout</a></li>
         </ul>
