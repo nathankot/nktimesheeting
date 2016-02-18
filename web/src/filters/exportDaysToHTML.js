@@ -14,19 +14,31 @@ export default function (days) {
     const notesString = _.chain(notes).map(escape).join('<br>').value()
 
     return `<tr>
-              <td>${dateString}</td>
-              <td>${durationString}</td>
+              <td align="center">${dateString}</td>
+              <td align="center">${durationString}</td>
               <td>${notesString}</td>
             </tr>`
   })
 
   var html = `
     <html>
+      <head>
+        <style>
+          body {
+            font-family: Helvetica, Verdana, sans-serif;
+            font-size: 16px;
+          }
+
+          td, th {
+            vertical-align: top;
+          }
+        </style>
+      </head>
       <body>
-        <table>
+        <table width="100%">
           <tr>
-            <th>Date</th>
-            <th>Duration</th>
+            <th width="160" align="center">Date</th>
+            <th width="160" align="center">Duration</th>
             <th>Notes</th>
           </tr>
           ${content}

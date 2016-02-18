@@ -28,6 +28,13 @@
       :on-update-request="updateEntry"
   ></timesheet-list-view>
 
+  <menu class="export-options">
+    <a :href="filteredEntries | reduceEntriesToDays | exportDaysToHTML"
+       download="timesheet.html">
+      Export HTML
+    </a>
+  </menu>
+
   <h2 v-if="!updatingEntry">New entry</h2>
   <entry-form :on-save="onNewEntry"
               v-if="!updatingEntry"></entry-form>
@@ -46,6 +53,8 @@
  import TimesheetListView from './timesheetListView'
  import EntryForm from './entryForm'
  import Datepicker from './datepicker'
+ import reduceEntriesToDays from 'src/filters/reduceEntriesToDays'
+ import exportDaysToHTML from 'src/filters/exportDaysToHTML'
 
  export default {
    data () {
@@ -99,6 +108,8 @@
    },
    components: { TimesheetListView,
                  EntryForm,
-                 Datepicker }
+                 Datepicker },
+   filters: { reduceEntriesToDays,
+              exportDaysToHTML }
  }
 </script>
