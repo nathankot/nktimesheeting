@@ -11,7 +11,6 @@ module Model.Extension ( Updatable (..)
 import ClassyPrelude.Yesod hiding (Proxy)
 import Foundation
 import Data.Aeson
-import Data.Proxy
 import Data.Bool (bool)
 import qualified Data.HashMap.Strict as H
 
@@ -48,18 +47,22 @@ runRules rules e = catMaybes $ (\r -> r e) <$> rules
 --   update itself by merging in a default whitelist of
 --   properties.
 class (FromJSON e, ToJSON e) => Updatable e where
-  updatableProperties :: YesodSite site => proxy e -> HandlerFor site [Text]
+  updatableProperties :: YesodSite site =>
+                         Maybe e ->
+                         HandlerFor site [Text]
 
 -- | Merge in the request object with an existing entity,
 --   taking care to only consider updatable properties.
-requireUpdatedEntity :: forall e site.
-                        (Updatable e, YesodSite site) =>
-                        e ->              -- ^ The existing entity 
-                        HandlerFor site e -- ^ The new updated entity
-requireUpdatedEntity e = do
+requireUpdatedEntity :: ( ToJSON e
+                        , FromJSON e
+                        , Updatable (Entity e)
+                        , YesodSite site ) =>
+                        Entity e ->       -- ^ The existing entity 
+                        HandlerFor site e -- ^ The new updated entity values
+requireUpdatedEntity entity@(Entity _ e) = do
   let defaults = toJSON e
-  whitelist <- updatableProperties (Proxy :: Proxy e)
-  requireEntity (Just  defaults) whitelist
+  whitelist <- updatableProperties $ Just entity
+  requireEntity (Just defaults) whitelist
 
 requireEntity :: (FromJSON e, YesodSite site) =>
                  Maybe Value -> -- ^ Default values for the entity

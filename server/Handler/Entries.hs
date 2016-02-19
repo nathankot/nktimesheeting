@@ -4,7 +4,6 @@ import Import hiding (Proxy)
 import Model.Entry ()
 import Control.Monad.Trans.Maybe
 import Database.Persist.Sql
-import Data.Proxy
 
 getEntriesR :: Handler Value
 getEntriesR = do
@@ -25,7 +24,7 @@ postEntriesR = do
   uid <- requireCachedAuthenticatedUserId
   entry <- validate =<<
            requireEntity (Just $ object ["userId" .= uid]) =<<
-           updatableProperties (Proxy :: Proxy Entry)
+           updatableProperties (Nothing :: Maybe (Entity Entry))
            :: Handler Entry
   eid <- runDB $ insert entry
   sendResponseStatus status201 $ object [

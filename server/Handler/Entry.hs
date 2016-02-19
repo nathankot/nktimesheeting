@@ -6,7 +6,7 @@ import Model.Entry ()
 patchEntryR :: EntryId -> Handler Html
 patchEntryR entryId = do
   e' <- fromMaybeM notFound $ runDB (get entryId)
-  e <- validate =<< requireUpdatedEntity e'
+  e <- validate =<< requireUpdatedEntity (Entity entryId e')
   runDB $ replace entryId e
   sendResponseStatus status200 $ object [
     "entry" .= (ResponseView (Entity entryId e))]

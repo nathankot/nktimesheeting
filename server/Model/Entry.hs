@@ -13,5 +13,5 @@ instance Validatable Entry where
   validations = return . runRules [
     rule MsgEntryEndDateEarlierThanStart $ (\(e') -> entryEnd e' > entryStart e') ]
 
-instance Updatable Entry where
+instance Updatable (Entity Entry) where
   updatableProperties _ = return ["start", "end", "note"]
