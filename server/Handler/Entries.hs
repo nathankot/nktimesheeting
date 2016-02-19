@@ -2,6 +2,8 @@ module Handler.Entries where
 
 import Import
 import Model.Entry
+import Control.Monad.Trans.Maybe
+import Database.Persist.Sql
 
 getEntriesR :: Handler Value
 getEntriesR = do
@@ -11,11 +13,12 @@ getEntriesR = do
     "entries" .= (ResponseView <$> entries) ]
   where
     filtersFromQueryParams :: Handler [Filter Entry]
-    filtersFromQueryParams = do
-      uid <- requireCachedAuthenticatedUserId
-      return [EntryUserId ==. uid]
-
-
+    filtersFromQueryParams = ((:[]) . (EntryUserId ==.))
+      <$> (fromMaybeM requireCachedAuthenticatedUserId
+           $ runMaybeT
+           $ unpack <$> (MaybeT $ lookupGetParam "userId")
+           >>= MaybeT . return . liftM toSqlKey . readMaybe)
+  
 postEntriesR :: Handler Value
 postEntriesR = do
   uid <- requireCachedAuthenticatedUserId

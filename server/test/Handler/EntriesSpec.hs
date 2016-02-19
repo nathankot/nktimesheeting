@@ -1,6 +1,8 @@
 module Handler.EntriesSpec (spec) where
 
 import TestImport
+import Model.Role
+import Database.Persist.Sql
 import Data.Time.Clock (addUTCTime)
 
 spec :: Spec
@@ -17,8 +19,8 @@ getEntriesSpec = describe "getEntriesR" $ do
     statusIs 401
 
   it "returns all entries of this user by default" $ do
-    user@(Entity uid _) <- setupEntries
-    makeRequest user
+    (user@(Entity uid _), _) <- setupEntries
+    makeRequest user user
     statusIs 200
     valueSatisfies "there are 5 entries" $ \(Object o) ->
       let decoded = fromJSON (o ! "entries") :: Result [Entry]
@@ -28,6 +30,22 @@ getEntriesSpec = describe "getEntriesR" $ do
         length entries == 5 &&
         all ((==uid) . entryUserId) entries
 
+  it "forbids other users to view entries" $ do
+    (user, other) <- setupEntries
+    makeRequest other user
+    statusIs 403
+
+  it "allows other managers to view entries" $ do
+    (user, other@(Entity oid _)) <- setupEntries
+    runDB $ update oid [UserRoles =. Roles [Common, Manager]]
+    makeRequest other user
+    statusIs 200
+    valueSatisfies "entries are not the other user's" $ \(Object o) ->
+      let decoded = fromJSON (o ! "entries") :: Result [Entry]
+          check (Error _) = False
+          check (Success entries) = all ((/=oid) . entryUserId) entries
+      in check decoded
+    
   where
     setupEntries = do
       user <- runDB $ factoryUser id
@@ -48,12 +66,13 @@ getEntriesSpec = describe "getEntriesR" $ do
         in e { entryStart = add (entryStart e)
              , entryEnd   = add (entryEnd e) }
 
-      return user
+      return (user, otheruser)
 
-    makeRequest user = do
+    makeRequest user (Entity euid _) = do
       requestJSONWithUser user $ do
         setUrl EntriesR
         setMethod "GET"
+        addGetParam "userId" $ pack . show . unSqlBackendKey . unUserKey $ euid
 
 postEntriesSpec :: SpecWith App
 postEntriesSpec = describe "postEntriesR" $ do

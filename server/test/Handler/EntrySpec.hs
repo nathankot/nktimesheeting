@@ -3,6 +3,7 @@ module Handler.EntrySpec (spec) where
 import TestImport
 import Data.Time.Clock (addUTCTime)
 import Model.Entry ()
+import Model.Role
 import qualified Database.Persist as DB
 
 spec :: Spec
@@ -17,6 +18,22 @@ patchEntrySpec = describe "patchEntryR" $ do
     entry <- runDB $ factoryEntry user id
     makeRequest otheruser entry $ \e -> e { entryNote = "New note" }
     statusIs 403
+
+  it "fails for managers" $ do
+    user <- runDB $ factoryUser id
+    otheruser <- runDB $ factoryUser $ \u -> u { userEmail = "other@email.com"
+                                               , userRoles = Roles [Common, Manager] }
+    entry <- runDB $ factoryEntry user id
+    makeRequest otheruser entry $ \e -> e { entryNote = "New note" }
+    statusIs 403
+
+  it "allows admins to make changes" $ do
+    user <- runDB $ factoryUser id
+    otheruser <- runDB $ factoryUser $ \u -> u { userEmail = "other@email.com"
+                                               , userRoles = Roles [Common, Admin] }
+    entry <- runDB $ factoryEntry user id
+    makeRequest otheruser entry $ \e -> e { entryNote = "New note" }
+    statusIs 200
 
   it "can update the entry" $ do
     user <- runDB $ factoryUser id
@@ -70,6 +87,22 @@ deleteEntrySpec = describe "deleteEntryR" $ do
     other <- runDB $ factoryUser $ \u -> u { userEmail = "other@email.com" }
     makeRequest other entry
     statusIs 403
+
+  it "fails for managers" $ do
+    user <- runDB $ factoryUser id
+    otheruser <- runDB $ factoryUser $ \u -> u { userEmail = "other@email.com"
+                                               , userRoles = Roles [Common, Manager] }
+    entry <- runDB $ factoryEntry user id
+    makeRequest otheruser entry
+    statusIs 403
+
+  it "allows admins to delete entries" $ do
+    user <- runDB $ factoryUser id
+    otheruser <- runDB $ factoryUser $ \u -> u { userEmail = "other@email.com"
+                                               , userRoles = Roles [Common, Admin] }
+    entry <- runDB $ factoryEntry user id
+    makeRequest otheruser entry
+    statusIs 204
 
   where
     makeRequest user (Entity eid _) =

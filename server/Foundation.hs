@@ -65,13 +65,14 @@ instance Yesod App where
     authRoute _ = Nothing
 
     -- Routes not requiring authentication.
-    isAuthorized FaviconR _ = return Authorized
-    isAuthorized RobotsR _ = return Authorized
-    isAuthorized SessionsR _ = return Authorized
-    isAuthorized UsersR _ = return Authorized
+    isAuthorized FaviconR _               = return Authorized
+    isAuthorized RobotsR _                = return Authorized
+    isAuthorized SessionsR _              = return Authorized
+    isAuthorized UsersR _                 = return Authorized
+    isAuthorized EntriesR isWrite         = Auth.authEntries isWrite
     isAuthorized (EntryR entryId) isWrite = Auth.authEntry entryId isWrite
     -- By default check that we have a user
-    isAuthorized _ _ = Auth.isUser
+    isAuthorized _ _                      = Auth.isUser
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows

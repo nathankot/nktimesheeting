@@ -19,17 +19,17 @@ data Role = Common
           | Admin
           deriving (Eq, Show, Read)
 
-newtype Roles = Roles { getRoles :: [Role] }
+newtype Roles = Roles { unRoles :: [Role] }
 
 instance PersistField Roles where
-  toPersistValue = toPersistValue . rolesToOctet . getRoles
+  toPersistValue = toPersistValue . rolesToOctet . unRoles
   fromPersistValue v = Roles . rolesFromOctet <$> fromPersistValue v
 
 instance PersistFieldSql Roles where
   sqlType _ = SqlInt32
 
 instance ToJSON Roles where
-  toJSON = toJSON . getRoles
+  toJSON = toJSON . unRoles
 
 instance FromJSON Roles where
   parseJSON v = Roles <$> parseJSON v

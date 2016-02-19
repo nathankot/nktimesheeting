@@ -5,7 +5,6 @@ import Database.Persist.Sql (SqlPersistM)
 import Model
 import Model.Role
 import Database.Persist hiding (get)
-import Database.Persist.Sql (SqlBackend)
 import Data.Time.Clock (addUTCTime)
 
 factoryEntry :: Entity User ->             -- ^ The entry owner
