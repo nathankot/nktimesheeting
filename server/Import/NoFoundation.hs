@@ -13,3 +13,4 @@ import Handler.Auth          as Import
 import Handler.Cache         as Import
 import Data.Int              as Import (Int8)
 import Text.Read             as Import (readMaybe)
+import Data.Bool             as Import (bool)

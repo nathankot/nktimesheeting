@@ -11,5 +11,9 @@ instance ToJSON (ResponseView (Entity User)) where
     H.delete "password" o
    where (Object o) = toJSON u
 
+instance Updatable User where
+  updatableProperties _ = return []
+
 instance Validatable User where
-  validations e = [ ((EV.isValid . encodeUtf8 . userEmail $ e), MsgInvalidEmailAddress) ]
+  validations = return . runRules [
+    rule MsgInvalidEmailAddress $ EV.isValid . encodeUtf8 . userEmail ]

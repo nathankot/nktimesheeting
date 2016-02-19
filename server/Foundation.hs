@@ -111,11 +111,6 @@ instance YesodPersist App where
 instance YesodPersistRunner App where
     getDBRunner = defaultGetDBRunner appConnPool
 
--- This instance is required to use forms. You can modify renderMessage to
--- achieve customized and internationalized form validation messages.
-instance RenderMessage App FormMessage where
-    renderMessage _ _ = defaultFormMessage
-
 -- Useful when writing code that is re-usable outside of the Handler context.
 -- An example is background jobs that send email.
 -- This can also be useful for writing code that works across multiple Yesod applications.

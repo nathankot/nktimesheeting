@@ -1,9 +1,10 @@
 module Handler.Entries where
 
-import Import
-import Model.Entry
+import Import hiding (Proxy)
+import Model.Entry ()
 import Control.Monad.Trans.Maybe
 import Database.Persist.Sql
+import Data.Proxy
 
 getEntriesR :: Handler Value
 getEntriesR = do
@@ -22,12 +23,10 @@ getEntriesR = do
 postEntriesR :: Handler Value
 postEntriesR = do
   uid <- requireCachedAuthenticatedUserId
-  RequestView entry <- requireJsonEntity [ "userId" .= uid ]
-                       (whitelist  entryWhitelist)
-                    :: Handler (RequestView  Entry)
-
-  let (isvalid, errors) = validate entry
-  unless isvalid $ invalidArgsI errors
+  entry <- validate =<<
+           requireEntity (Just $ object ["userId" .= uid]) =<<
+           updatableProperties (Proxy :: Proxy Entry)
+           :: Handler Entry
   eid <- runDB $ insert entry
   sendResponseStatus status201 $ object [
     "entry" .= (ResponseView (Entity eid entry)) ]
