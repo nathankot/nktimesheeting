@@ -31,6 +31,7 @@ library
                      Handler.Auth
                      Handler.Cache
                      Handler.Users
+                     Handler.User
                      Handler.Sessions
                      Handler.Entries
                      Handler.Entry
@@ -122,6 +123,7 @@ test-suite test
     other-modules:  Handler.CommonSpec
                     Handler.SessionsSpec
                     Handler.UsersSpec
+                    Handler.UserSpec
                     Handler.EntriesSpec
                     Handler.EntrySpec
                     TestExtension

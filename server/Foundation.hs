@@ -69,6 +69,7 @@ instance Yesod App where
     isAuthorized RobotsR _                = return Authorized
     isAuthorized SessionsR _              = return Authorized
     isAuthorized UsersR _                 = return Authorized
+    isAuthorized (UserR userId) isWrite   = Auth.authUser userId isWrite 
     isAuthorized EntriesR isWrite         = Auth.authEntries isWrite
     isAuthorized (EntryR entryId) isWrite = Auth.authEntry entryId isWrite
     -- By default check that we have a user

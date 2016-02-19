@@ -2,6 +2,7 @@
 module Handler.Auth ( isUser
                     , authEntry
                     , authEntries
+                    , authUser
                     ) where
 
 import ClassyPrelude.Yesod
@@ -23,9 +24,18 @@ isUser = do
   muid <- cachedMaybeAuthenticatedUserId
   return $ maybe AuthenticationRequired (const Authorized) muid
 
-authEntries :: YesodSite site =>
-               Bool -> -- ^ Is write operation
-               HandlerFor site AuthResult
+authUser :: YesodSite site => Key User -> Bool -> HandlerFor site AuthResult
+authUser userId _ = do
+  user <- requireCachedAuthenticatedUser
+  return $ auth user userId
+  where
+    auth (Entity uid u) tuid
+      | uid == tuid       = Authorized
+      | elem Admin roles  = Authorized
+      | otherwise         = Unauthorized "Insufficient permissions"
+      where roles = unRoles . userRoles $ u
+
+authEntries :: YesodSite site => Bool -> HandlerFor site AuthResult
 authEntries isWrite = do
   user@(Entity uid _) <- requireCachedAuthenticatedUser
   targetUID <- (liftM2 fromMaybe) (return uid) $ runMaybeT
@@ -41,7 +51,7 @@ authEntries isWrite = do
       where roles = unRoles . userRoles $ u
 
 authEntry :: YesodSite site => Key Entry -> Bool -> HandlerFor site AuthResult
-authEntry entryId isWrite = do
+authEntry entryId _ = do
   user <- requireCachedAuthenticatedUser
   me <- runDB $ get entryId
   e <- maybe notFound return me

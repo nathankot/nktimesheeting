@@ -2,6 +2,7 @@
 /robots.txt            RobotsR GET
 
 /api/users             UsersR POST
+/api/users/#UserId     UserR PATCH DELETE
 /api/sessions          SessionsR POST DELETE
 /api/entries           EntriesR GET POST
 /api/entries/#EntryId  EntryR PATCH DELETE
