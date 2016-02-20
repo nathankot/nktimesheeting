@@ -9,6 +9,7 @@
         <ul>
           <li><a v-link="{ path: '/timesheet' }">timesheet</a></li>
           <li><a v-link="{ path: '/settings' }">settings</a></li>
+          <li v-if="usersEditable"><a v-link="{ path: '/users' }">users</a></li>
           <li><a @click="logout">logout</a></li>
         </ul>
       </div>
@@ -29,6 +30,13 @@
      return {
        disposable: new Rx.CompositeDisposable(),
        user: { email: '' }
+     }
+   },
+
+   computed: {
+     usersEditable () {
+       return _.isArray(this.user.roles) &&
+              _.contains(this.user.roles, 'Admin')
      }
    },
 

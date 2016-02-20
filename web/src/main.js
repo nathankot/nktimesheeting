@@ -13,6 +13,7 @@ import Authenticate from './components/authenticate'
 import Authenticated from './components/authenticated'
 import Timesheet from './components/timesheet'
 import Settings from './components/settings'
+import Users from './components/users'
 
 router.map({
   '/login': { component: Authenticate },
@@ -20,7 +21,8 @@ router.map({
     component: Authenticated,
     subRoutes: {
       '/timesheet': { component: Timesheet },
-      '/settings': { component: Settings }
+      '/settings': { component: Settings },
+      '/users': { component: Users }
     }
   }
 })
@@ -44,7 +46,6 @@ Store.currentUser
   })
 
 router.redirect({
-  '*': '/login',
   '/': '/timesheet'
 })
 

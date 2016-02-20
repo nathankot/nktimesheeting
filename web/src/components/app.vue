@@ -9,8 +9,9 @@
    font-family: Helvetica, sans-serif;
  }
 
- a {
+ a, a:visited {
    color: #2CA039;
    cursor: pointer;
+   text-decoration: underline;
  }
 </style>
