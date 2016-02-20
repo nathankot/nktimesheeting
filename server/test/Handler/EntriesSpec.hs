@@ -4,6 +4,7 @@ import TestImport
 import Model.Role
 import Database.Persist.Sql
 import Data.Time.Clock (addUTCTime)
+import Data.List ((!!))
 
 spec :: Spec
 spec = withApp $
@@ -102,6 +103,30 @@ postEntriesSpec = describe "postEntriesR" $ do
     makeRequestWithTimes user start now
     statusIs 400
 
+  it "fails creating entries for other users normally" $ do
+    user <- runDB $ factoryUser id
+    other@(Entity ouid _) <- runDB $ factoryUser $ \u -> u { userEmail = "other@email.com" }
+    makeRequestWithUserForUser user other
+    statusIs 201 -- Silently ignores userid
+    Entity _ e  <- liftM (!!0) $ runDB $ selectList [] [] :: YesodExample App (Entity Entry)
+    boolIsFalse "entry belongs to other user" $ ouid == entryUserId e
+
+  it "fails creating entries for other users as a manager" $ do
+    user <- runDB $ factoryUser $ \u -> u { userRoles = Roles [Manager] }
+    other@(Entity ouid _) <- runDB $ factoryUser $ \u -> u { userEmail = "other@email.com" }
+    makeRequestWithUserForUser user other
+    statusIs 201 -- Silently ignores userid
+    Entity _ e  <- liftM (!!0) $ runDB $ selectList [] [] :: YesodExample App (Entity Entry)
+    boolIsFalse "entry belongs to other user" $ ouid == entryUserId e
+
+  it "allows admins to create entries for other users" $ do
+    user <- runDB $ factoryUser $ \u -> u { userRoles = Roles [Admin] }
+    other@(Entity ouid _) <- runDB $ factoryUser $ \u -> u { userEmail = "other@email.com" }
+    makeRequestWithUserForUser user other
+    statusIs 201
+    Entity _ e  <- liftM (!!0) $ runDB $ selectList [] [] :: YesodExample App (Entity Entry)
+    boolIsTrue "entry belongs to other user" $ ouid == entryUserId e
+
   where
     makeRequestWithTimes user start end = requestJSONWithUser user $ do
       setUrl EntriesR
@@ -110,6 +135,19 @@ postEntriesSpec = describe "postEntriesR" $ do
                                        , "end"   .= toJSON end
                                        , "note"  .= ("Hello there 123" :: Text)
                                        ]
+
+    makeRequestWithUserForUser user (Entity tuid _) = do
+      start <- liftIO getCurrentTime
+      let end = addUTCTime 3600 start
+      requestJSONWithUser user $ do
+        setUrl EntriesR
+        setMethod "POST"
+        setRequestBody $ encode $ object
+          [ "start"  .= toJSON start
+          , "end"    .= toJSON end
+          , "note"   .= ("Hello there 123" :: Text)
+          , "userId" .= (fromIntegral . unSqlBackendKey . unUserKey $ tuid :: Int)
+          ]
 
     makeRequest = do
       user <- runDB $ factoryUser id
