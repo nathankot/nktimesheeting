@@ -1,6 +1,14 @@
 <template>
 
-  <menu class="date-filter">
+  <menu class="filters">
+    <div class="field">
+      <div class="label">View entries for</div>
+      <select v-model="currentViewedUser" @change="retrieve">
+        <option :value="null" selected>Myself</option>
+        <option :value="user" v-for="user in viewableUsers">{{ user.email }}</option>
+      </select>
+    </div>
+
     <div class="field">
       <div class="label">From</div>
       <datepicker
@@ -50,6 +58,7 @@
  import Rx from 'rx'
  import moment from 'moment'
  import Api from 'api'
+ import Store from 'store'
  import TimesheetListView from './timesheetListView'
  import EntryForm from './entryForm'
  import Datepicker from './datepicker'
@@ -63,7 +72,9 @@
        disposable: new Rx.CompositeDisposable(),
        entries: [],
        startDate: moment().startOf('day').format('YYYY-MM-DD'),
-       endDate: moment().endOf('day').format('YYYY-MM-DD')
+       endDate: moment().endOf('day').format('YYYY-MM-DD'),
+       viewableUsers: [],
+       currentViewedUser: null
      }
    },
    computed: {
@@ -97,18 +108,32 @@
 
      retrieve () {
        this.disposable.add(
-         Api.entries.get().rx()
+         Api.entries
+            .get({}, this.currentViewedUser ? { userId: this.currentViewedUser.id } : {})
+            .rx()
             .subscribeOnNext((res) => {
               this.entries = res.data.entries
             }))
      }
    },
+
    ready () {
      this.retrieve()
+     this.disposable.add(
+       Rx.Observable.combineLatest(
+         Store.currentUser,
+         Api.users.get().rx())
+         .subscribeOnNext(({ 0: currentUser, 1: res }) => {
+           this.viewableUsers = _.filter(res.data.users, (u) => {
+             return u.id !== currentUser.id
+           })
+         }))
    },
+
    components: { TimesheetListView,
                  EntryForm,
                  Datepicker },
+
    filters: { reduceEntriesToDays,
               exportDaysToHTML }
  }
