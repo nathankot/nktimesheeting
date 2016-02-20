@@ -14,3 +14,11 @@ getFaviconR = return $ TypedContent "image/x-icon"
 getRobotsR :: Handler TypedContent
 getRobotsR = return $ TypedContent typePlain
                     $ toContent $(embedFile "config/robots.txt")
+
+
+getHomeR :: Handler TypedContent
+getHomeR = do
+  master <- getYesod
+  let staticDir = appStaticDir $ appSettings master
+  sendFile "text/html" $ staticDir </> "index.html"
+  

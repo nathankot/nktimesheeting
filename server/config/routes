@@ -1,5 +1,6 @@
 /favicon.ico           FaviconR GET
 /robots.txt            RobotsR GET
+/                      HomeR GET
 
 /api/users             UsersR POST GET
 /api/users/#UserId     UserR PATCH DELETE
