@@ -1,4 +1,4 @@
-module Handler.Users (postUsersR) where
+module Handler.Users (postUsersR, getUsersR) where
 
 import Import
 import Data.Aeson
@@ -8,6 +8,19 @@ import Model.Role
 import Handler.Sessions (SessionResponse (..))
 import Yesod.Auth.Email (saltPass)
 
+getUsersR :: Handler Value
+getUsersR = do
+  Entity uid u <- requireCachedAuthenticatedUser
+  let roles = unRoles . userRoles $ u
+  users <- runDB $ selectList (makeFilters [UserId ==. uid] roles)
+           $ []
+           :: Handler [Entity User]
+  sendResponseStatus status200 $ object [
+    "users" .= (ResponseView <$> users) ]
+  where
+    makeFilters = foldl' $ \filters ->
+      bool filters [] . (`elem` [Admin, Manager])
+    
 postUsersR :: Handler Value
 postUsersR = do
   userreq <- validate =<< requireJsonBody :: Handler CreateUserRequest
