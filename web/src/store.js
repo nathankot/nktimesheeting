@@ -1,4 +1,3 @@
-import _ from 'underscore'
 import Rx from 'rx'
 
 // One of two evils:
@@ -6,29 +5,37 @@ import Rx from 'rx'
 // store auth in localStorage = XSS
 const localStorage = window.localStorage
 
-var initialUser
-
-try {
-  initialUser = (
-    localStorage &&
-    localStorage.getItem('user') &&
-    JSON.parse(localStorage.getItem('user'))) || null
-} catch (_) {
-  initialUser = null
-}
-
 const store = {
   isLoggedIn: false,
-  currentUser: new Rx.BehaviorSubject(initialUser)
+  currentUser: new Rx.BehaviorSubject(fromLocalStorage('user')),
+  preferredWorkingHoursPerDay: new Rx.BehaviorSubject(fromLocalStorage('preferredWorkingHours', 8))
 }
 
 store.currentUser
   .subscribeOnNext(u => {
     store.isLoggedIn = !!u
-    if (localStorage) {
-      localStorage.setItem('user', JSON.stringify(u))
-      _.isEmpty(u) && localStorage.removeItem('user')
-    }
+    toLocalStorage('user', u)
   })
 
+store.preferredWorkingHoursPerDay
+  .subscribeOnNext(h => toLocalStorage('preferredWorkingHours', h))
+
+function toLocalStorage (key, value) {
+  if (localStorage && JSON && JSON.stringify) {
+    localStorage.setItem(key, JSON.stringify(value))
+  }
+}
+
+function fromLocalStorage (key, def = null) {
+  try {
+    return (localStorage &&
+            localStorage.getItem(key) &&
+            JSON && JSON.parse &&
+            JSON.parse(localStorage.getItem(key))) || def
+  } catch (_) {
+    return null
+  }
+}
+
 export default store
+
