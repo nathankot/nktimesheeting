@@ -7,7 +7,7 @@
           <th>End</th>
           <th>Duration</th>
           <th>Notes</th>
-          <th></th>
+          <th v-if="editable"></th>
         </tr>
       </thead>
       <tbody>
@@ -16,7 +16,7 @@
           <td>{{ moment.utc(entry.end).local().format(shortDateFormat) }}</td>
           <td>{{ moment.duration(moment(entry.end).diff(moment(entry.start))).humanize() }}</td>
           <td>{{ entry.note }}</td>
-          <td>
+          <td v-if="editable">
             <a @click="onUpdateRequest(entry)">Edit</a>
             <a @click="onDeleteRequest(entry)">Remove</a>
           </td>
@@ -35,7 +35,8 @@
    props: {
      onUpdateRequest: { type: Function, default () { return _.noop } },
      onDeleteRequest: { type: Function, default () { return _.noop } },
-     entries: { required: true, type: Array }
+     entries: { required: true, type: Array },
+     editable: { type: Boolean, default: true }
    },
    data () {
      return {

@@ -58,19 +58,23 @@
  import Datepicker from './datepicker'
  import ErrorMessage from './errorMessage'
 
+ function defaultEntry () {
+   return {
+     id: null,
+     userId: this.userId || undefined,
+     start: moment().subtract(1, 'hour').utc().format(dateFormat),
+     end: moment.utc().format(dateFormat),
+     note: ''
+   }
+ }
+
  export default {
    props: {
      onSave: { type: Function, default () { return _.constant } },
+     userId: {},
      entry: {
        type: Object,
-       default () {
-         return {
-           id: null,
-           start: moment().subtract(1, 'hour').utc().format(dateFormat),
-           end: moment.utc().format(dateFormat),
-           note: ''
-         }
-       }
+       default () { return defaultEntry.apply(this) }
      }
    },
    data () {
@@ -88,13 +92,16 @@
      isCreate () { return !_.isNumber(this.entry.id) }
    },
    watch: {
-     startDate: 'updateEntry',
-     startTime: 'updateEntry',
-     endDate: 'updateEntry',
-     endTime: 'updateEntry'
+     startDate: 'updateEntryDates',
+     startTime: 'updateEntryDates',
+     endDate: 'updateEntryDates',
+     endTime: 'updateEntryDates',
+     userId: function (userId) {
+       this.entry.userId = userId
+     }
    },
    methods: {
-     updateEntry () {
+     updateEntryDates () {
        var start = moment(this.startDate + ' ' + this.startTime)
        var end = moment(this.endDate + ' ' + this.endTime)
        if (end.isBefore(start)) {
@@ -112,9 +119,12 @@
          (this.isCreate
         ? Api.entries.save(this.entry)
         : Api.entries.update({ id: this.entry.id }, this.entry))
-            .rx()
-            .doOnNext((r) => this.onSave(r.data.entry))
-            .subscribeOnError((r) => this.error = getError(r)))
+              .rx()
+              .doOnNext((r) => {
+                this.onSave(r.data.entry)
+                this.entry = defaultEntry.apply(this)
+              })
+              .subscribeOnError((r) => this.error = getError(r)))
      }
    },
    beforeDestroy () {
