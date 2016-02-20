@@ -35,6 +35,7 @@ patchUserR userId = do
   sendResponseStatus status200 $ object [
     "user" .= (ResponseView (Entity userId u'')) ]
     
-  
 deleteUserR :: UserId -> Handler Html
-deleteUserR userId = error "Not yet implemented: deleteUserR"
+deleteUserR userId = do
+  runDB $ delete userId
+  sendResponseStatus status204 Null

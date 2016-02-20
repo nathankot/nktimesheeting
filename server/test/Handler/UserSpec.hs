@@ -99,4 +99,29 @@ patchUserSpec = describe "patchUserR" $ do
                                          , "password" .= password ]
 
 deleteUserSpec :: SpecWith App
-deleteUserSpec = describe "deleteUserR" $ return ()
+deleteUserSpec = describe "deleteUserR" $ do
+
+  it "forbids normal users to delete others" $ do
+    _ <- makeRequest id
+    statusIs 403
+
+  it "forbids managers to delete others" $ do
+    _ <- makeRequest $ \u -> u { userRoles = Roles [Manager] }
+    statusIs 403
+
+  it "allows admins to delete others" $ do
+    ouid <- makeRequest $ \u -> u { userRoles = Roles [Admin] }
+    statusIs 204
+    mu <- runDB $ DB.get ouid
+    boolIsTrue "other user is deleted" $ isNothing mu
+    
+  where
+    makeRequest transform = do
+      user <- runDB $ factoryUser transform
+      Entity ouid _ <- runDB $ factoryUser $  \u -> u { userEmail = "other@email.com" }
+      requestJSONWithUser user $ do
+        setUrl (UserR ouid)
+        setMethod "DELETE"
+      return ouid
+        
+
