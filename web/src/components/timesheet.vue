@@ -35,6 +35,7 @@
       :on-delete-request="deleteEntry"
       :on-update-request="updateEntry"
       :editable="editable"
+      :preferred-working-hours="preferredWorkingHours"
   ></timesheet-list-view>
 
   <menu class="export-options">
@@ -79,7 +80,8 @@
        startDate: moment().startOf('day').format('YYYY-MM-DD'),
        endDate: moment().endOf('day').format('YYYY-MM-DD'),
        viewableUsers: [],
-       currentViewedUser: { id: null }
+       currentViewedUser: { id: null },
+       preferredWorkingHours: 8
      }
    },
    computed: {
@@ -129,6 +131,10 @@
 
    ready () {
      this.retrieve()
+
+     this.disposable.add(
+       Store.preferredWorkingHoursPerDay
+         .subscribeOnNext(h => this.preferredWorkingHours = parseInt(h, 10)))
 
      this.disposable.add(
        Rx.Observable.combineLatest(
