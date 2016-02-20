@@ -148,9 +148,10 @@
         props: {
             width: { type: String, default: '238px' },
             readonly: { type: Boolean, default: false },
-            value: { type: String, default: '', twoWay: true },
+            value: { type: String, default: '' },
             format: { type: String, default: 'YYYY-MM-DD' },
-            placeholder: { type: String, default: 'Choose a date' }
+            placeholder: { type: String, default: 'Choose a date' },
+            onChange: { type: Function, default: function () {} }
         },
         data () {
             return {
@@ -167,6 +168,9 @@
             },
             show () {
                 this.update();
+            },
+            value (v) {
+              this.onChange(v)
             }
         },
         methods: {

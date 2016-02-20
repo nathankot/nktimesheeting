@@ -1,11 +1,10 @@
 <template>
-
   <menu class="filters">
     <div class="field">
       <div class="label">View entries for</div>
-      <select v-model="currentViewedUser" @change="retrieve">
-        <option :value="{ id: null }" selected>Myself</option>
-        <option :value="user" v-for="user in viewableUsers">{{ user.email }}</option>
+      <select v-model="userId" @change="updateRoute('userId')($event)">
+        <option :value="0">Myself</option>
+        <option :value="user.id" v-for="user in viewableUsers">{{ user.email }}</option>
       </select>
     </div>
 
@@ -13,8 +12,9 @@
       <div class="label">From</div>
       <datepicker
           placeholder="Start date"
-          :value.sync="startDate"
           format="YYYY-MM-DD"
+          :on-change="updateRoute('start')"
+          :value="start"
           required
       ></datepicker>
     </div>
@@ -23,20 +23,21 @@
       <div class="label">To</div>
       <datepicker
           placeholder="End date"
-          :value.sync="endDate"
           format="YYYY-MM-DD"
+          :on-change="updateRoute('end')"
+          :value="end"
           required
       ></datepicker>
     </div>
   </menu>
 
-  <timesheet-list-view
+  <router-view
       :entries="filteredEntries"
       :on-delete-request="deleteEntry"
       :on-update-request="updateEntry"
       :editable="editable"
       :preferred-working-hours="preferredWorkingHours"
-  ></timesheet-list-view>
+  ></router-view>
 
   <menu class="export-options">
     <a :href="filteredEntries | reduceEntriesToDays | exportDaysToHTML"
@@ -47,7 +48,7 @@
 
   <h2 v-if="!updatingEntry && editable">New entry</h2>
   <entry-form :on-save="onNewEntry"
-              :user-id="currentViewedUser.id"
+              :user-id="userId"
               v-if="!updatingEntry && editable"
   ></entry-form>
 
@@ -73,30 +74,39 @@
  export default {
    data () {
      return {
+       userId: parseInt(this.$route.params.userId, 10),
        currentUser: null,
        updatingEntry: undefined,
        disposable: new Rx.CompositeDisposable(),
        entries: [],
-       startDate: moment().startOf('day').format('YYYY-MM-DD'),
-       endDate: moment().endOf('day').format('YYYY-MM-DD'),
        viewableUsers: [],
-       currentViewedUser: { id: null },
        preferredWorkingHours: 8
      }
    },
+
    computed: {
+     start () {
+       return this.$route.params.start
+     },
+
+     end () {
+       return this.$route.params.end
+     },
+
      editable () {
        return (
          (_.isObject(this.currentUser) && _.contains(this.currentUser.roles, 'Admin')) ||
-         !_.isNumber(this.currentViewedUser.id))
+         (_.isNumber(this.userId) && this.userId === 0))
      },
+
      filteredEntries () {
        return _.filter(this.entries, (e) => {
-         return moment.utc(e.start).isAfter(moment(this.startDate).startOf('day')) &&
-                moment.utc(e.end).isBefore(moment(this.endDate).endOf('day'))
+         return moment.utc(e.start).isAfter(moment(this.start).startOf('day')) &&
+                moment.utc(e.end).isBefore(moment(this.end).endOf('day'))
        })
      }
    },
+
    methods: {
      onNewEntry (entry) {
        this.entries.push(entry)
@@ -118,14 +128,35 @@
             }))
      },
 
+     updateRoute (key) {
+       // @param value - either an event or value
+       return (value) => {
+         if (_.isObject(value) && value.target && value.target.value) {
+           value = value.target.value
+         }
+         var newParams = {}
+         newParams[key] = value
+         this.$route.router.go({
+           name: this.$route.name,
+           params: _.defaults(newParams, this.$route.params)
+         })
+       }
+     },
+
      retrieve () {
        this.disposable.add(
          Api.entries
-            .get({}, this.currentViewedUser.id ? { userId: this.currentViewedUser.id } : {})
+            .get({}, this.userId > 0 ? { userId: this.userId } : {})
             .rx()
             .subscribeOnNext((res) => {
               this.entries = res.data.entries
             }))
+     }
+   },
+
+   watch: {
+     userId (id) {
+       this.retrieve()
      }
    },
 
