@@ -20,9 +20,9 @@ router.map({
   '/': {
     component: Authenticated,
     subRoutes: {
-      '/timesheet': { component: Timesheet },
       '/settings': { component: Settings },
-      '/users': { component: Users }
+      '/users': { component: Users },
+      '/timesheet': { component: Timesheet }
     }
   }
 })
@@ -37,10 +37,17 @@ router.beforeEach((transition) => {
 })
 
 Store.currentUser
-  .subscribeOnNext((u) => {
-    if (!_.isEmpty(u)) {
+  .scan((a, e) => [a[1], e], [null, null])
+  .skip(1)
+  // Listen to any changes to the current user
+  .subscribeOnNext(([prev, next]) => {
+    // Login
+    if (_.isEmpty(prev) && !_.isEmpty(next)) {
       router.go('/')
-    } else {
+    }
+
+    // Logout
+    if (!_.isEmpty(prev) && _.isEmpty(next)) {
       router.go('/login')
     }
   })
