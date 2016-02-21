@@ -1,7 +1,7 @@
 
 ROOT_DIR					:= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-SERVER_SRC				:= $(find server -type f -not -path '*/\.*')
+SERVER_SRC				:= $(shell find server -type f -not -path '*/\.*')
 GLOBAL_STACK_ROOT := $(shell stack path --global-stack-root)
 RUN_CMD						:= docker run -d \
 												-m 512m\
@@ -10,7 +10,7 @@ RUN_CMD						:= docker run -d \
 												nktimesheeting-build:latest \
 												tail -f /dev/null
 
-dist/server: web/dist $(SERVER_SRC)
+dist/server: web/dist $(SERVER_SRC) dist/migrations
 	@echo "[INFO] Copying web assets into static directory"
 	cp -r web/dist server/static
 	@echo "[INFO] Building the server on a cedar-like docker instance"
@@ -26,6 +26,9 @@ dist/server: web/dist $(SERVER_SRC)
 		docker cp $${CONTAINER_ID}:/root/.local/bin/server $@; \
 		echo "[INFO] Tearing down the build container"; \
 		docker stop $$CONTAINER_ID
+
+dist/migrations: $(SERVER_SRC)
+	cp -r server/migrations dist/migrations
 
 WEB_SRC := $(func web -type f -not -path '*/dist*' -not -path '*/node_modules')
 
