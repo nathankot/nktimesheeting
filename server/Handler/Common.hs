@@ -20,5 +20,5 @@ getHomeR :: Handler TypedContent
 getHomeR = do
   master <- getYesod
   let staticDir = appStaticDir $ appSettings master
-  sendFile "text/html" $ staticDir </> "index.html"
+  sendFile typeHtml $ staticDir </> "index.html"
   

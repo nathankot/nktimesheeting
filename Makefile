@@ -10,9 +10,10 @@ RUN_CMD						:= docker run -d \
 												nktimesheeting-build:latest \
 												tail -f /dev/null
 
-dist/server: web/dist $(SERVER_SRC) dist/migrations
-	@echo "[INFO] Copying web assets into static directory"
-	cp -r web/dist server/static
+.PHONY: build
+build: dist/server dist/migrations
+
+dist/server: server/static $(SERVER_SRC)
 	@echo "[INFO] Building the server on a cedar-like docker instance"
 	@mkdir -p $(@D)
 	@echo "[INFO] Bootstrapping image for build"; \
@@ -30,8 +31,13 @@ dist/server: web/dist $(SERVER_SRC) dist/migrations
 dist/migrations: $(SERVER_SRC)
 	cp -r server/migrations dist/migrations
 
+server/static: dist/static
+	@echo "[INFO] Copying web assets into static directory"
+	cp -r dist/static $@
+
 WEB_SRC := $(func web -type f -not -path '*/dist*' -not -path '*/node_modules')
 
-web/dist: $(WEB_SRC)
+dist/static: $(WEB_SRC)
 	@echo "[INFO] Building web assets"
 	cd web; npm run build
+	cp -r web/dist $@
