@@ -24,19 +24,15 @@
 
 Run a server for the static files on port `8080`:
 
-```sh
-cd web
-npm install webpack -g
-npm install
-npm run dev
-```
+    cd web
+    npm install webpack -g
+    npm install
+    npm run dev
 
 Run the API server on port `3000`:
 
-```sh
-cd server
-stack build --exec server
-```
+    cd server
+    stack build --exec server
 
 The static server will automatically forward API requests to the API server
 during development. Visit `http://localhost:8080/` to develop.
@@ -45,9 +41,7 @@ during development. Visit `http://localhost:8080/` to develop.
 
 Use `make` to build everything:
 
-```sh
-make
-```
+    make
 
 The above command requires the following binaries to be on your `PATH`:
 
@@ -57,10 +51,8 @@ The above command requires the following binaries to be on your `PATH`:
 
 Commit and push to Heroku:
 
-```sh
-git commit -m "Build"
-git push heroku master
-```
+    git commit -m "Build"
+    git push heroku master
 
 [vue]: http://vuejs.org
 [sass]: http://sass-lang.com
