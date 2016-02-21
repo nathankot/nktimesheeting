@@ -1,0 +1,20 @@
+FROM heroku/cedar:latest
+MAINTAINER Nathan Kot <me@nathankot.com>
+ENV LANG            C.UTF-8
+
+# Get packages
+RUN apt-get update && apt-get install -y netcat wget
+
+# Get stack
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 575159689BEFB442
+RUN echo 'deb http://download.fpcomplete.com/ubuntu trusty main'| tee /etc/apt/sources.list.d/fpco.list
+RUN apt-get update && apt-get install -y libpq-dev python-dev stack
+
+# Static dependencies for our server
+RUN apt-get install -y libsqlite3-dev
+
+# This is where `stack install` puts stuff
+ENV PATH /root/.local/bin:$PATH
+
+WORKDIR /opt/server
+COPY . .
