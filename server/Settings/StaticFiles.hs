@@ -1,9 +1,7 @@
-{-# Language CPP #-}
 module Settings.StaticFiles where
 
-import ClassyPrelude.Yesod
 import Settings     (appStaticDir, compileTimeAppSettings)
-import Yesod.EmbeddedStatic
+import Yesod.Static (staticFiles)
 
 -- This generates easy references to files in the static directory at compile time,
 -- giving you compile-time verification that referenced files exist.
@@ -17,12 +15,4 @@ import Yesod.EmbeddedStatic
 -- If the identifier is not available, you may use:
 --
 --     StaticFile ["js", "script.js"] []
-
-#if DEVELOPMENT
-#define DEV_BOOL True
-#else
-#define DEV_BOOL False
-#endif
-       
-mkEmbeddedStatic DEV_BOOL "embeddedStatic" [
-  embedDir (appStaticDir compileTimeAppSettings)]
+staticFiles (appStaticDir compileTimeAppSettings)

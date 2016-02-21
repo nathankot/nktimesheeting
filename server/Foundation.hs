@@ -1,7 +1,6 @@
 module Foundation where
 
 import Import.NoFoundation
-import Yesod.EmbeddedStatic
 import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Yesod.Core.Types     (Logger)
 import qualified Handler.Auth as Auth
@@ -13,7 +12,7 @@ import qualified Yesod.Core.Unsafe as Unsafe
 -- access to the data present here.
 data App = App
     { appSettings    :: AppSettings
-    , appStatic      :: EmbeddedStatic -- ^ Settings for static file serving.
+    , appStatic      :: Static -- ^ Settings for static file serving.
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger
