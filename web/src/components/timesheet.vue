@@ -112,8 +112,10 @@
 
      filteredEntries () {
        return _.filter(this.entries, (e) => {
-         return moment.utc(e.start).isAfter(moment(this.start).startOf('day')) &&
-                moment.utc(e.end).isBefore(moment(this.end).endOf('day'))
+         const start = moment(this.start)
+         const end = moment(this.end)
+         return moment.utc(e.start).isBetween(start, end) ||
+                moment.utc(e.end).isBetween(start, end)
        })
      }
    },
