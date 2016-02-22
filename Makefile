@@ -1,8 +1,7 @@
-
 ROOT_DIR					:= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-
-SERVER_SRC				:= $(shell find server -type f -not -path '*/\.*')
-GLOBAL_STACK_ROOT := $(shell stack path --global-stack-root)
+WEB_SRC						 = $(shell find web/src -type f)
+SERVER_SRC				 = $(shell find server -type f -not -path '*/\.*')
+GLOBAL_STACK_ROOT  = $(shell stack path --global-stack-root 2>/dev/null)
 RUN_CMD						:= docker run -d \
 												-m 512m\
 												-v $(GLOBAL_STACK_ROOT):/root/.stack \
@@ -21,23 +20,27 @@ dist/server: server/static $(SERVER_SRC)
 		echo "[INFO] Starting a build container"; \
 		CONTAINER_ID=`${RUN_CMD}`; \
 		echo "[INFO] Building binary on docker container: $$CONTAINER_ID"; \
-		docker exec $$CONTAINER_ID stack setup --allow-different-user && \
-		docker exec $$CONTAINER_ID stack install --allow-different-user && \
+		docker exec $$CONTAINER_ID stack setup		--allow-different-user && \
+		docker exec $$CONTAINER_ID stack build		--allow-different-user && \
+		docker exec $$CONTAINER_ID stack install	--allow-different-user && \
 		echo "[INFO] Copying built binary to host (this machine)" && \
 		docker cp $${CONTAINER_ID}:/root/.local/bin/server $@; \
 		echo "[INFO] Tearing down the build container"; \
 		docker stop $$CONTAINER_ID
 
 dist/migrations: $(SERVER_SRC)
-	cp -r server/migrations dist/migrations
+	rm -rf $@
+	cp -r server/migrations $@
+
+# DEPENDENCIES #############################################################
 
 server/static: dist/static
 	@echo "[INFO] Copying web assets into static directory"
+	rm -rf $@
 	cp -r dist/static $@
-
-WEB_SRC := $(shell find web -type f -not -path '*/dist*' -not -path '*/node_modules')
 
 dist/static: $(WEB_SRC)
 	@echo "[INFO] Building web assets"
-	cd web; npm run build
+	cd web && npm run build
+	rm -rf $@
 	cp -r web/dist $@
