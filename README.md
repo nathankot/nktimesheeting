@@ -4,7 +4,7 @@
 
 ## The stack
 
-### Static assets
+### Frontend
 
 * [Vue.js][vue]
 * [RxJS][rxjs]
@@ -13,14 +13,24 @@
 ### API Server
 
 * [Haskell][haskell]
+* [PostgreSQL][postgres]
 * [Yesod][yesod]
 
-## Dependencies
+## Toolchain dependencies
 
 * [Stack][stack]
 * NPM
+* Docker
 
 ## Development
+
+### Setup
+
+Install postgres and make a new user and db:
+
+    createuser newapp -W # choose 'newapp' for the password
+    createdb newapp --owner=newapp
+    createdb newapp-testing --owner=newapp
 
 Run a server for the static files on port `8080`:
 
@@ -37,17 +47,23 @@ Run the API server on port `3000`:
 The static server will automatically forward API requests to the API server
 during development. Visit `http://localhost:8080/` to develop.
 
+### Testing
+
+Run server tests with `stack`
+
+    cd server
+    stack test
+
+Run frontend tests with `npm`
+
+    cd web
+    npm test
+
 ## Deployment
 
 Use `make` to build everything:
 
     make
-
-The above command requires the following binaries to be on your `PATH`:
-
-* `docker`
-* `stack`
-* `npm`
 
 Commit and push to Heroku:
 
@@ -60,3 +76,4 @@ Commit and push to Heroku:
 [yesod]: https://github.com/yesodweb/yesod
 [haskell]: http://haskell.org
 [stack]: http://haskellstack.org
+[postgres]: http://www.postgresql.org/
