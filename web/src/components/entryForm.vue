@@ -1,53 +1,61 @@
 <template>
   <error-message v-show="error">{{ error }}</error-message>
 
-  <div class="field-group">
-    <div class="field">
-      <div class="label">Start date</div>
-      <datepicker
-          placeholder="Start date"
-          :value.sync="startDate"
-          format="YYYY-MM-DD"
-          required
-      ></datepicker>
+  <form class="entry-form" @submit.prevent="submit">
+    <div class="date-times">
+      <div class="field-group of-two">
+        <div class="field">
+          <div class="label">Start date</div>
+          <datepicker
+              placeholder="Start date"
+              :value.sync="startDate"
+              format="YYYY-MM-DD"
+              required
+          ></datepicker>
+        </div>
+
+        <div class="field">
+          <div class="label">Start time</div>
+          <input type="time" v-model="startTime" required />
+        </div>
+      </div>
+
+      <div class="field-group of-two">
+        <div class="field">
+          <div class="label">End date</div>
+          <datepicker
+              placeholder="End date"
+              :value.sync="endDate"
+              format="YYYY-MM-DD"
+              required
+          ></datepicker>
+        </div>
+
+        <div class="field">
+          <div class="label">End time</div>
+          <input type="time" v-model="endTime" required />
+        </div>
+      </div>
     </div>
 
-    <div class="field">
-      <div class="label">Start time</div>
-      <input type="time" v-model="startTime" required />
-    </div>
-  </div>
+    <div class="notes-and-submit">
+      <div class="field">
+        <div class="label">Notes</div>
+        <textarea v-model="entry.note" rows="10"></textarea>
+      </div>
 
-  <div class="field-group">
-    <div class="field">
-      <div class="label">End date</div>
-      <datepicker
-          placeholder="End date"
-          :value.sync="endDate"
-          format="YYYY-MM-DD"
-          required
-      ></datepicker>
-    </div>
+      <input class="submit"
+            type="submit"
+            :value="isCreate ? 'Create' : 'Update'" />
 
-    <div class="field">
-      <div class="label">End time</div>
-      <input type="time" v-model="endTime" required />
-    </div>
-  </div>
-
-  <div class="field">
-    <div class="label">Notes</div>
-    <textarea v-model="entry.note" rows="10"></textarea>
-  </div>
       <a class="button secondary"
          v-if="allowCancel"
          @click="onCancel">
         Cancel
       </a>
+    </div>
+  </form>
 
-  <button class="submit" @click="submit">
-    {{ isCreate ? 'Create' : 'Update' }}
-  </button>
 </template>
 
 <style lang="sass">
@@ -141,3 +149,22 @@
                  ErrorMessage }
  }
 </script>
+
+<style lang="sass">
+ @import 'src/settings';
+ @import 'src/mixins';
+
+ .entry-form {
+   .date-times {
+     @include span-columns(8);
+     @include media($mobile) {
+       @include span-columns(6);
+     }
+   }
+
+   .notes-and-submit {
+     @include span-columns(12);
+     @include clearfix;
+   }
+ }
+</style>

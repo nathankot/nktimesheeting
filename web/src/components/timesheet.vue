@@ -1,62 +1,72 @@
 <template>
-  <menu class="filters">
-    <div class="field">
-      <div class="label">View entries for</div>
-      <select v-model="userId" @change="updateRoute('userId')($event)">
-        <option :value="0">Myself</option>
-        <option :value="user.id" v-for="user in viewableUsers">{{ user.email }}</option>
-      </select>
+  <div class="timesheet">
+    <menu class="filters">
+      <div class="field-group of-three">
+        <div class="field select-field">
+          <div class="label">View entries for</div>
+          <div class="select-wrapper">
+            <select v-model="userId" @change="updateRoute('userId')($event)">
+              <option :value="0">Myself</option>
+              <option :value="user.id" v-for="user in viewableUsers">{{ user.email }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field right">
+          <div class="label">From</div>
+          <datepicker
+              placeholder="Start date"
+              format="YYYY-MM-DD"
+              :on-change="updateRoute('start')"
+              :value="start"
+              required
+          ></datepicker>
+        </div>
+
+        <div class="field right">
+          <div class="label">To</div>
+          <datepicker
+              placeholder="End date"
+              format="YYYY-MM-DD"
+              :on-change="updateRoute('end')"
+              :value="end"
+              required
+          ></datepicker>
+        </div>
+      </div>
+    </menu>
+
+    <router-view
+        :entries="filteredEntries"
+        :on-delete-request="deleteEntry"
+        :on-update-request="updateEntry"
+        :editable="editable"
+        :preferred-working-hours="preferredWorkingHours"
+    ></router-view>
+
+    <menu class="export-options">
+      <a class="button secondary small"
+         :href="filteredEntries | reduceEntriesToDays | exportDaysToHTML"
+         download="timesheet.html">
+        Export HTML
+      </a>
+    </menu>
+
+    <div class="entry-form">
+      <h2 v-if="!updatingEntry && editable">New entry</h2>
+      <entry-form :on-save="onNewEntry"
+                  :user-id="userId"
+                  v-if="!updatingEntry && editable"
+      ></entry-form>
+
+      <h2 v-if="updatingEntry">Edit entry</h2>
+      <entry-form :on-save="onUpdatedEntry"
+                  :on-cancel="onCancelUpdate"
+                  :entry="updatingEntry"
+                  v-if="updatingEntry"
+      ></entry-form>
     </div>
-
-    <div class="field">
-      <div class="label">From</div>
-      <datepicker
-          placeholder="Start date"
-          format="YYYY-MM-DD"
-          :on-change="updateRoute('start')"
-          :value="start"
-          required
-      ></datepicker>
-    </div>
-
-    <div class="field">
-      <div class="label">To</div>
-      <datepicker
-          placeholder="End date"
-          format="YYYY-MM-DD"
-          :on-change="updateRoute('end')"
-          :value="end"
-          required
-      ></datepicker>
-    </div>
-  </menu>
-
-  <router-view
-      :entries="filteredEntries"
-      :on-delete-request="deleteEntry"
-      :on-update-request="updateEntry"
-      :editable="editable"
-      :preferred-working-hours="preferredWorkingHours"
-  ></router-view>
-
-  <menu class="export-options">
-    <a :href="filteredEntries | reduceEntriesToDays | exportDaysToHTML"
-       download="timesheet.html">
-      Export HTML
-    </a>
-  </menu>
-
-  <h2 v-if="!updatingEntry && editable">New entry</h2>
-  <entry-form :on-save="onNewEntry"
-              :user-id="userId"
-              v-if="!updatingEntry && editable"
-  ></entry-form>
-
-  <h2 v-if="updatingEntry">Edit entry</h2>
-  <entry-form :on-save="onUpdatedEntry"
-              :entry="updatingEntry"
-              v-if="updatingEntry"
-  ></entry-form>
+  </div>
 </template>
 
 <script>
@@ -65,11 +75,12 @@
  import moment from 'moment'
  import Api from 'api'
  import Store from 'store'
+ import reduceEntriesToDays from 'src/filters/reduceEntriesToDays'
+ import exportDaysToHTML from 'src/filters/exportDaysToHTML'
+
  import TimesheetListView from './timesheetListView'
  import EntryForm from './entryForm'
  import Datepicker from './datepicker'
- import reduceEntriesToDays from 'src/filters/reduceEntriesToDays'
- import exportDaysToHTML from 'src/filters/exportDaysToHTML'
 
  export default {
    data () {
@@ -113,6 +124,10 @@
      },
 
      onUpdatedEntry (entry) {
+       this.updatingEntry = undefined
+     },
+
+     onCancelUpdate () {
        this.updatingEntry = undefined
      },
 
@@ -189,3 +204,29 @@
               exportDaysToHTML }
  }
 </script>
+
+<style lang="sass">
+ @import 'src/settings';
+ @import 'src/mixins';
+
+ .export-options {
+   @include outer-container;
+   text-align: right;
+ }
+</style>
+
+<style lang="sass">
+ @import 'src/settings';
+ @import 'src/mixins';
+ 
+ .timesheet {
+   .filters {
+     @include outer-container;
+   }
+ }
+
+ .entry-form {
+   @include outer-container;
+ }
+
+</style>

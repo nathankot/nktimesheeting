@@ -1,13 +1,13 @@
 <template>
-  <div class="entries-list">
-    <table>
+  <div class="timesheet-list">
+    <table class="data-table">
       <thead>
         <tr>
-          <th>Start</th>
-          <th>End</th>
-          <th>Duration</th>
+          <th class="small">Start</th>
+          <th class="small">End</th>
+          <th class="small">Duration</th>
           <th>Notes</th>
-          <th v-if="editable"></th>
+          <th class="small" v-if="editable"></th>
         </tr>
       </thead>
       <tbody>
@@ -27,10 +27,18 @@
           <td>{{ moment.utc(entry.start).local().format(shortDateFormat) }}</td>
           <td>{{ moment.utc(entry.end).local().format(shortDateFormat) }}</td>
           <td>{{ moment.duration(moment(entry.end).diff(moment(entry.start))).format('h[h] m[m]') }}</td>
-          <td>{{ entry.note }}</td>
+          <td class="note-column">{{ entry.note }}</td>
           <td v-if="editable">
-            <a @click="onUpdateRequest(entry)">Edit</a>
-            <a @click="onDeleteRequest(entry)">Remove</a>
+            <menu class="row-action">
+              <ul>
+                <li>
+                  <a @click="onUpdateRequest(entry)">Edit</a>
+                </li>
+                <li>
+                  <a @click="onDeleteRequest(entry)">Remove</a>
+                </li>
+              </ul>
+            </menu>
           </td>
         </tr>
       </tbody>
@@ -85,7 +93,24 @@
 </script>
 
 <style lang="sass">
- tr.highlight-red {
-   background-color: red;
+ @import 'src/settings';
+ @import 'src/mixins';
+
+ .timesheet-list {
+   th.small {
+     width: em(200);
+   }
+
+   tr.highlight-red {
+     background-color: tint(pink, 50%);
+     td {
+       border-bottom: 1px dashed white;
+       border-top: 1px dashed white;
+     }
+   }
+   
+   .note-column {
+     text-align: left;
+   }
  }
 </style>
