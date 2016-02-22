@@ -1,0 +1,12 @@
+@import 'src/mixins';
+
+$visual-grid: false;
+$grid-columns: 12;
+$mobile: new-breakpoint(max-width 500px 6);
+
+$font-color: #414141;
+
+$primary-color: #2CA039;
+$secondary-color: #414141;
+$input-height: em(54);
+$input-radius: em(6);

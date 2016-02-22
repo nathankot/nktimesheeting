@@ -1,17 +1,19 @@
 <template>
-  <div>
+  <div class="app">
     <router-view></router-view>
   </div>
 </template>
 
 <style lang="sass">
- body {
-   font-family: Helvetica, sans-serif;
- }
+ @import 'src/settings';
+ @import 'src/mixins';
+ @import 'src/theme';
 
- a, a:visited {
-   color: #2CA039;
-   cursor: pointer;
-   text-decoration: underline;
+ .app {
+   margin: 0 em(12);
+   padding: em(56) 0;
+   @include media($mobile) {
+     padding: em(12) 0;
+   }
  }
 </style>

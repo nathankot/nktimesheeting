@@ -61,8 +61,10 @@ module.exports = {
   },
   sassLoader: {
     includePaths: [
-      path.resolve(__dirname, "../src/bourbon/bourbon"),
-      path.resolve(__dirname, "../src/neat/neat")
+      path.resolve(__dirname, "../src/bourbon"),
+      path.resolve(__dirname, "../src/neat"),
+      path.resolve(__dirname, "../node_modules/normalize-scss/node_modules/support-for/sass"),
+      path.resolve(__dirname, "../node_modules/normalize-scss/sass")
     ]
   },
   eslint: {

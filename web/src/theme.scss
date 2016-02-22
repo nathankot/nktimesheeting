@@ -1,0 +1,239 @@
+@import 'src/settings';
+@import 'src/mixins';
+@import 'normalize';
+@import 'neat/grid/visual-grid';
+@import "neat/grid/box-sizing";
+
+@include normalize();
+
+body {
+  color: $font-color;
+  font-family: Helvetica, sans-serif;
+}
+
+h1, h2, h3 {
+  font-weight: 300;
+  color: $font-color;
+}
+
+h2 {
+  color: #797979;
+  font-size: em(24);
+  line-height: em(56);
+  border-bottom: 1px solid #E8E8E8;
+}
+
+a, a:visited {
+  color: $primary-color;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+menu {
+  padding: 0;
+}
+
+.field-group {
+  @include fill-parent;
+  @include row(table);
+
+  .field {
+    padding-right: em(24);
+    &:last-of-type {
+      padding-right: 0;
+    }
+  }
+
+  @include media($mobile) {
+    @include row();
+    @include reset-display;
+    .field {
+      padding-right: 0;
+    }
+  }
+
+  @each $pair in ((i: 2, w: two)
+                  (i: 3, w: three)
+                  (i: 4, w: four)
+                  (i: 5, w: five)) {
+    &.of-#{map-get($pair, w)} {
+      $col: 12 / map-get($pair, i);
+      .field { @include span-columns($col of 12); }
+      @include media($mobile) {
+        .field { @include span-columns(1 of 1); }
+      }
+    }
+  }
+}
+
+.field {
+  margin-bottom: em(24);
+  @include media($mobile) {
+    &.right {
+      text-align: left;
+    }
+  }
+}
+
+.field > .label {
+  font-size: em(12);
+  color: #CDCDCD;
+  margin-bottom: em(8);
+}
+
+.field .datetime-picker {
+  @include media($mobile) {
+    width: 100%;
+  }
+}
+
+.input {
+  @include border-color($primary-color);
+  border: 0;
+  max-width: 100%;
+  height: $input-height;
+  padding: em(12) em(18);
+  background: #FBFBFB;
+  outline: 0;
+  border-radius: $input-radius;
+
+  @include media($mobile) {
+    width: 100%;
+  }
+
+  @include placeholder {
+    color: #CDCDCD;
+  }
+
+  &:focus {
+    @include placeholder {
+      color: rgba(0, 0, 0, 0);
+    }
+  }
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="time"] {
+  @extend .input;
+}
+
+textarea {
+  @extend .input;
+  height: $input-height * 4;
+  width: 100%;
+}
+
+.select-wrapper {
+  @include position(relative);
+  display: inline-block;
+  &::after {
+    display: block;
+    content: "";
+    @include position(absolute, 60% em(12) auto auto);
+    @include transform(translateY(-50%));
+    width: 0;
+    height: 0;
+    border: 7px solid rgba(0, 0, 0, 0);
+    border-top-color: #656565;
+  }
+
+  select {
+    @extend .input;
+    @include appearance(none);
+    padding-right: em(36);
+  }
+}
+
+.button {
+  display: inline-block;
+  height: $input-height;
+  border: 1px solid $primary-color;
+  border-radius: $input-radius;
+  padding: 0 em(22);
+  background: none;
+  outline: 0;
+  cursor: pointer;
+}
+
+a.button {
+  line-height: $input-height;
+  text-decoration: none;
+}
+
+.button.small {
+  font-size: 12px;
+}
+
+.button.secondary {
+  @include button-color($secondary-color);
+}
+
+.submit {
+  @extend .button;
+  @include button-color($primary-color);
+}
+
+.data-table {
+  @include fill-parent;
+  border-collapse: collapse;
+
+  th {
+    color: #797979;
+    font-weight: 100;
+  }
+
+  th, td {
+    padding: em(18);
+    text-align: center;
+  }
+
+  thead {
+    th {
+      border-right: 1px solid #E8E8E8;
+      &:last-of-type {
+        border-right: none;
+      }
+    }
+  }
+
+  tbody {
+    td {
+      border-top: 1px dashed #E8E8E8;
+      border-bottom: 1px dashed #E8E8E8;
+      border-right: 1px solid #E8E8E8;
+      &:last-of-type {
+        border-right: none;
+      }
+    }
+
+    tr:last-of-type {
+      td {
+        border-bottom: 0;
+      }
+    }
+  }
+
+   menu.row-action {
+     padding: 0;
+     margin: 0;
+
+     ul {
+       padding: 0;
+       margin: 0;
+       list-style: none;
+     }
+
+     li {
+       display: inline-block;
+       text-align: center;
+       width: em(64);
+     }
+
+     a {
+       text-decoration: none;
+     }
+   }
+}
