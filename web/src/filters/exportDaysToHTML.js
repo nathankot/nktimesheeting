@@ -41,7 +41,7 @@ export default function (days) {
             <th width="160" align="center">Duration</th>
             <th>Notes</th>
           </tr>
-          ${content}
+          ${content.join('\n')}
         </table>
       </body>
     </html>
