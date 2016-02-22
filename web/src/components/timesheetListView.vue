@@ -107,6 +107,7 @@
    tbody {
      tr.highlight-green, tr.highlight-red {
        td {
+        border-right: 1px solid white;
          border-bottom: 1px dashed white;
          border-top: 1px dashed white;
        }

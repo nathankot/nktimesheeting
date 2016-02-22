@@ -12,7 +12,7 @@
           </div>
         </div>
 
-        <div class="field right">
+        <div class="field">
           <div class="label">From</div>
           <datepicker
               placeholder="Start date"
@@ -23,7 +23,7 @@
           ></datepicker>
         </div>
 
-        <div class="field right">
+        <div class="field">
           <div class="label">To</div>
           <datepicker
               placeholder="End date"

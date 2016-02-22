@@ -68,11 +68,6 @@ menu {
 
 .field {
   margin-bottom: em(24);
-  @include media($mobile) {
-    &.right {
-      text-align: left;
-    }
-  }
 }
 
 .field > .label {
@@ -90,16 +85,12 @@ menu {
 .input {
   @include border-color($primary-color);
   border: 0;
-  max-width: 100%;
+  width: 100%;
   height: $input-height;
   padding: em(12) em(18);
   background: #FBFBFB;
   outline: 0;
   border-radius: $input-radius;
-
-  @include media($mobile) {
-    width: 100%;
-  }
 
   @include placeholder {
     color: #CDCDCD;
