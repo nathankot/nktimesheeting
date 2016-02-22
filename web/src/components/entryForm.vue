@@ -111,11 +111,6 @@
    },
 
    watch: {
-     startDate: 'verifyDates',
-     startTime: 'verifyDates',
-     endDate: 'verifyDates',
-     endTime: 'verifyDates',
-
      userId: function (userId) {
        this.entry.userId = userId
      },
@@ -132,16 +127,6 @@
        this.startTime = moment.utc(entry.start).local().format('HH:mm')
        this.endDate = moment.utc(entry.end).local().format('YYYY-MM-DD')
        this.endTime = moment.utc(entry.end).local().format('HH:mm')
-     },
-
-     verifyDates () {
-       var start = moment(this.startDate + ' ' + this.startTime)
-       var end = moment(this.endDate + ' ' + this.endTime)
-       if (end.isBefore(start)) {
-         end = start.add(1, 'hour')
-         this.endDate = end.format('YYYY-MM-DD')
-         this.endTime = end.format('HH:mm')
-       }
      },
 
      submit () {
