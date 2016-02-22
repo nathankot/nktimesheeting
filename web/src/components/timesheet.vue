@@ -223,6 +223,11 @@
    .filters {
      @include outer-container;
    }
+
+   .timesheet-list {
+     margin: 0 auto;
+     max-width: $max-width * 1.25;
+   }
  }
 
  .entry-form {
