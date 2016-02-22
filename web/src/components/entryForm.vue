@@ -41,7 +41,7 @@
     <div class="notes-and-submit">
       <div class="field">
         <div class="label">Notes</div>
-        <textarea v-model="entry.note" rows="10"></textarea>
+        <textarea v-model="note" rows="10"></textarea>
       </div>
 
       <input class="submit"
@@ -50,7 +50,7 @@
 
       <a class="button secondary"
          v-if="allowCancel"
-         @click="onCancel">
+         @click="cancel">
         Cancel
       </a>
     </div>
@@ -75,8 +75,8 @@
    return {
      id: null,
      userId: this.userId || undefined,
-     start: moment().subtract(1, 'hour').utc().format(dateFormat),
-     end: moment.utc().format(dateFormat),
+     start: moment().subtract(1, 'hour').startOf('hour').utc().format(dateFormat),
+     end: moment().startOf('hour').utc().format(dateFormat),
      note: ''
    }
  }
@@ -91,32 +91,50 @@
        default () { return defaultEntry.apply(this) }
      }
    },
+
    data () {
      return {
        _: _,
        error: null,
+       note: '',
        disposable: new Rx.CompositeDisposable(),
-       startDate: moment.utc(this.entry.start).local().format('YYYY-MM-DD'),
-       startTime: moment.utc(this.entry.start).local().format('HH:mm'),
-       endDate: moment.utc(this.entry.end).local().format('YYYY-MM-DD'),
-       endTime: moment.utc(this.entry.end).local().format('HH:mm')
+       startDate: moment().utc().format('YYYY-MM-DD'),
+       startTime: moment().utc().format('HH:mm'),
+       endDate: moment().utc().format('YYYY-MM-DD'),
+       endTime: moment().utc().format('HH:mm')
      }
    },
+
    computed: {
      isCreate () { return !_.isNumber(this.entry.id) },
      allowCancel () { return this.onCancel !== _.noop }
    },
+
    watch: {
-     startDate: 'updateEntryDates',
-     startTime: 'updateEntryDates',
-     endDate: 'updateEntryDates',
-     endTime: 'updateEntryDates',
+     startDate: 'verifyDates',
+     startTime: 'verifyDates',
+     endDate: 'verifyDates',
+     endTime: 'verifyDates',
+
      userId: function (userId) {
        this.entry.userId = userId
+     },
+
+     entry (entry) {
+       this.updateFromEntry(entry)
      }
    },
+
    methods: {
-     updateEntryDates () {
+     updateFromEntry (entry) {
+       this.note = entry.note
+       this.startDate = moment.utc(entry.start).local().format('YYYY-MM-DD')
+       this.startTime = moment.utc(entry.start).local().format('HH:mm')
+       this.endDate = moment.utc(entry.end).local().format('YYYY-MM-DD')
+       this.endTime = moment.utc(entry.end).local().format('HH:mm')
+     },
+
+     verifyDates () {
        var start = moment(this.startDate + ' ' + this.startTime)
        var end = moment(this.endDate + ' ' + this.endTime)
        if (end.isBefore(start)) {
@@ -124,11 +142,15 @@
          this.endDate = end.format('YYYY-MM-DD')
          this.endTime = end.format('HH:mm')
        }
-       this.entry.start = start.utc().format(dateFormat)
-       this.entry.end = end.utc().format(dateFormat)
      },
 
      submit () {
+       var start = moment(this.startDate + ' ' + this.startTime)
+       var end = moment(this.endDate + ' ' + this.endTime)
+       this.entry.start = start.utc().format(dateFormat)
+       this.entry.end = end.utc().format(dateFormat)
+       this.entry.note = this.note
+
        this.error = null
        this.disposable.add(
          (this.isCreate
@@ -140,11 +162,21 @@
                 this.entry = defaultEntry.apply(this)
               })
               .subscribeOnError((r) => this.error = getError(r)))
+     },
+
+     cancel () {
+       this.onCancel()
      }
    },
+
+   ready () {
+     this.updateFromEntry(this.entry)
+   },
+
    beforeDestroy () {
      this.disposable.dispose()
    },
+
    components: { Datepicker,
                  ErrorMessage }
  }
