@@ -1,8 +1,23 @@
 <template>
-  <error-message v-show="showError">{{ error }}</error-message>
-  <input v-model="user.email" type="email" placeholder="email@address.com"/>
-  <input v-model="user.password" type="password" placeholder="choose a password" />
-  <button @click="submit" class="submit">{{ submitButtonLabel }}</button>
+
+  <form @submit.prevent="submit" class="form">
+    <error-message v-show="showError">{{ error }}</error-message>
+
+    <div class="field-group of-two">
+      <div class="field">
+        <div class="label">Email</div>
+        <input v-model="user.email" type="email" placeholder="email@address.com"/>
+      </div>
+
+      <div class="field">
+        <div class="label">Password</div>
+        <input v-model="user.password" type="password" placeholder="choose a password" />
+      </div>
+    </div>
+
+    <input class="submit" type="submit" :value="submitButtonLabel" />
+  </form>
+
 </template>
 
 <script>

@@ -1,10 +1,14 @@
 <template>
 
-  <h2>Login</h2>
-  <login-form></login-form>
+  <div class="login">
+    <h2>Login</h2>
+    <login-form></login-form>
+  </div>
 
-  <h2>Register</h2>
-  <user-form></user-form>
+  <div class="register">
+    <h2>Register</h2>
+    <user-form></user-form>
+  </div>
 
 </template>
 
@@ -16,3 +20,13 @@
    components: { LoginForm, UserForm }
  }
 </script>
+
+<style lang="sass">
+ @import 'src/settings';
+ @import 'src/mixins';
+
+ .login, .register {
+   @include outer-container();
+   margin-bottom: em(72);
+ }
+</style>
