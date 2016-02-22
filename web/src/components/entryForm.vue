@@ -39,6 +39,11 @@
     <div class="label">Notes</div>
     <textarea v-model="entry.note" rows="10"></textarea>
   </div>
+      <a class="button secondary"
+         v-if="allowCancel"
+         @click="onCancel">
+        Cancel
+      </a>
 
   <button class="submit" @click="submit">
     {{ isCreate ? 'Create' : 'Update' }}
@@ -70,7 +75,8 @@
 
  export default {
    props: {
-     onSave: { type: Function, default () { return _.constant } },
+     onSave: { type: Function, default: _.noop },
+     onCancel: { type: Function, default: _.noop },
      userId: {},
      entry: {
        type: Object,
@@ -89,7 +95,8 @@
      }
    },
    computed: {
-     isCreate () { return !_.isNumber(this.entry.id) }
+     isCreate () { return !_.isNumber(this.entry.id) },
+     allowCancel () { return this.onCancel !== _.noop }
    },
    watch: {
      startDate: 'updateEntryDates',
