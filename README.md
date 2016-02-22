@@ -67,6 +67,7 @@ Use `make` to build everything:
 
 Commit and push to Heroku:
 
+    heroku buildpacks:set https://github.com/nathankot/heroku-binary-buildpack
     git commit -m "Build"
     git push heroku master
 
