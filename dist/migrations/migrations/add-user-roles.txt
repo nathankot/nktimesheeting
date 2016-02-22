@@ -1,4 +1,0 @@
-Depends: add-user
-Apply: |
-  ALTER TABLE "user" ADD COLUMN "roles" INT4 NOT NULL DEFAULT 0;
-  ALTER TABLE "user" ALTER COLUMN "roles" DROP DEFAULT;
