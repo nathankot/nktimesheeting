@@ -11,6 +11,18 @@
         </tr>
       </thead>
       <tbody>
+        <tr class="loading-message" v-if="loading && sortedEntries.length == 0">
+          <td colspan="5">
+            <h3>Loading...</h3>
+          </td>
+        </tr>
+
+        <tr class="no-entries-message" v-if="!loading && sortedEntries.length == 0">
+          <td colspan="5">
+            <h3>There are no entries between these dates.</h3>
+          </td>
+        </tr>
+
         <tr class="entry" :class="{ 'highlight-red': isEntryPartOfBadDay(entry) }" v-for="entry in sortedEntries">
           <td>{{ moment.utc(entry.start).local().format(shortDateFormat) }}</td>
           <td>{{ moment.utc(entry.end).local().format(shortDateFormat) }}</td>
@@ -43,8 +55,14 @@
    data () {
      return {
        _: _,
+       loading: true,
        moment: moment,
        shortDateFormat: shortDateFormat
+     }
+   },
+   watch: {
+     entries () {
+       this.loading = false
      }
    },
    computed: {
