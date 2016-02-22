@@ -61,6 +61,8 @@ Run frontend tests with `npm`
 
 ## Deployment
 
+Ensure you have docker setup and running. If you're on OSX look into [docker-machine][docker-machine].
+
 Use `make` to build everything:
 
     make
@@ -78,3 +80,4 @@ Commit and push to Heroku:
 [haskell]: http://haskell.org
 [stack]: http://haskellstack.org
 [postgres]: http://www.postgresql.org/
+[docker-machine]: https://docs.docker.com/machine/
