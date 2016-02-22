@@ -118,6 +118,8 @@
 
      updateEntry (entry) {
        this.updatingEntry = entry
+       const $form = this.$el.querySelector('.entry-form')
+       $form.scrollIntoView && $form.scrollIntoView()
      },
 
      deleteEntry (entry) {
