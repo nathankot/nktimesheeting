@@ -102,7 +102,7 @@
 </style>
 
 <template>
-    <div class="datetime-picker" :style="{ width: width }">
+    <div class="datetime-picker">
         <input
             type="text"
             :placeholder="placeholder"
@@ -146,7 +146,6 @@
  /*eslint indent:0, semi:0*/
     export default {
         props: {
-            width: { type: String, default: '238px' },
             readonly: { type: Boolean, default: false },
             value: { type: String, default: '' },
             format: { type: String, default: 'YYYY-MM-DD' },
