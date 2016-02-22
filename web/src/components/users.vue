@@ -1,7 +1,9 @@
 <template>
 
   <div class="users-list">
-    <table>
+    <h2>Users</h2>
+
+    <table class="data-table">
       <thead>
         <tr>
           <th>Email</th>
@@ -28,7 +30,13 @@
                 @change="updateRolesFor(user)" />
           </td>
           <td>
-            <a @click="deleteUser(user)">Delete</a>
+            <menu class="row-action">
+              <ul>
+                <li>
+                  <a @click="deleteUser(user)">Delete</a>
+                </li>
+              </ul>
+            </menu>
           </td>
         </tr>
       </tbody>
@@ -93,3 +101,12 @@
    }
  }
 </script>
+
+<style lang="sass">
+ @import 'src/settings';
+ @import 'src/mixins';
+
+ .users-list {
+   @include outer-container;
+ }
+</style>

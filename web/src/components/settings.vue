@@ -1,8 +1,10 @@
 <template>
   <div class="settings">
+    <h2>Settings</h2>
+
     <div class="field">
       <div class="label">Preferred working hours per day</div>
-      <input type="number" v-model="preferredWorkingHours" />
+      <input required type="number" v-model="preferredWorkingHours" />
     </div>
   </div>
 </template>
@@ -33,3 +35,12 @@
    }
  }
 </script>
+
+<style lang="sass">
+ @import 'src/mixins';
+ @import 'src/settings';
+
+ .settings {
+   @include outer-container;
+ }
+</style>
