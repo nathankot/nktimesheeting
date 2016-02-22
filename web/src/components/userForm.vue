@@ -24,21 +24,24 @@
  import Rx from 'rx'
  import _ from 'underscore'
  import Api, { getError } from 'api'
- import Store from 'store'
 
  import ErrorMessage from './errorMessage'
 
+ function defaultUser () {
+   return {
+     id: null,
+     email: '',
+     password: ''
+   }
+ }
+
  export default {
    props: {
+     onCreate: { type: Function, default: _.noop },
+     createLabel: { default: null },
      user: {
        type: Object,
-       default () {
-         return {
-           id: null,
-           email: '',
-           password: ''
-         }
-       }
+       default () { return defaultUser() }
      }
    },
    data () {
@@ -48,18 +51,22 @@
      }
    },
    computed: {
-     isRegister () { return _.isEmpty(this.user.id) },
+     isCreate () { return _.isEmpty(this.user.id) },
      showError () { return !_.isEmpty(this.error) },
-     submitButtonLabel () { return this.isRegister ? 'Register' : 'Update' }
+     submitButtonLabel () {
+       if (_.isString(this.createLabel)) { return this.createLabel }
+       return this.isCreate ? 'Register' : 'Update'
+     }
    },
    methods: {
      submit () {
        this.error = null
        this.disposable.add(
-         Api.users[this.isRegister ? 'save' : 'update'](this.user).rx()
+         Api.users[this.isCreate ? 'save' : 'update'](this.user).rx()
             .doOnNext((res) => {
-              if (this.isRegister) {
-                Store.currentUser.onNext(res.data.user)
+              if (this.isCreate) {
+                this.onCreate(res.data.user)
+                this.user = defaultUser()
               }
             })
             .subscribeOnError((res) => this.error = getError(res)))

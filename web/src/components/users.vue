@@ -43,6 +43,15 @@
     </table>
   </div>
 
+  <div class="new-user">
+    <h2>Create a new user</h2>
+
+    <user-form
+        create-label="Create"
+        :on-create="onCreateUser"
+    ></user-form>
+  </div>
+
 </template>
 
 <script>
@@ -50,6 +59,8 @@
  import Api from 'api'
  import Store from 'store'
  import Rx from 'rx'
+
+ import UserForm from './userForm'
 
  export default {
    data () {
@@ -76,6 +87,10 @@
             .subscribeOnError(() => this.refreshSignal.onNext()))
      },
 
+     onCreateUser (user) {
+       this.users.push(user)
+     },
+
      deleteUser (user) {
        this.disposable.add(
          Api.users.delete({ id: user.id })
@@ -98,7 +113,9 @@
              return u.id !== currentUser.id
            })
          }))
-   }
+   },
+
+   components: { UserForm }
  }
 </script>
 
@@ -107,6 +124,10 @@
  @import 'src/mixins';
 
  .users-list {
+   @include outer-container;
+ }
+
+ .new-user {
    @include outer-container;
  }
 </style>

@@ -7,16 +7,20 @@
 
   <div class="register">
     <h2>Register</h2>
-    <user-form></user-form>
+    <user-form :on-create="onCreateUser"></user-form>
   </div>
 
 </template>
 
 <script>
+ import Store from 'store'
  import LoginForm from './loginForm'
  import UserForm from './userForm'
 
  export default {
+   methods: {
+     onCreateUser (user) { Store.currentUser.onNext(user) }
+   },
    components: { LoginForm, UserForm }
  }
 </script>
