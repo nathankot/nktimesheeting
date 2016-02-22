@@ -54,6 +54,11 @@ router.beforeEach((transition) => {
   if (transition.to.path !== '/login' && !Store.isLoggedIn) {
     return transition.redirect('/login')
   }
+
+  if (transition.to.path === '/login' && Store.isLoggedIn) {
+    return transition.redirect('/')
+  }
+
   transition.next()
 })
 
