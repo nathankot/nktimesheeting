@@ -35,7 +35,7 @@ server/static: dist/static
 	@echo "[INFO] Copying web assets into static directory"
 	cp -r dist/static $@
 
-WEB_SRC := $(func web -type f -not -path '*/dist*' -not -path '*/node_modules')
+WEB_SRC := $(shell find web -type f -not -path '*/dist*' -not -path '*/node_modules')
 
 dist/static: $(WEB_SRC)
 	@echo "[INFO] Building web assets"
