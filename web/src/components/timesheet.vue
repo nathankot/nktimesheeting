@@ -53,6 +53,13 @@
     </menu>
 
     <div class="entry-form">
+      <success-message v-if="createdEntry">
+        Timesheet entry created.
+        <span v-if="!isEntryInCurrentViewingWindow(createdEntry)">
+          <a @click.prevent="goToRouteForEntry(createdEntry)">View</a> in the timesheet.
+        </span>
+      </success-message>
+
       <h2 v-if="!updatingEntry && editable">New timesheet entry</h2>
       <entry-form :on-save="onNewEntry"
                   :user-id="userId"
@@ -81,11 +88,13 @@
  import TimesheetListView from './timesheetListView'
  import EntryForm from './entryForm'
  import Datepicker from './datepicker'
+ import SuccessMessage from './successMessage'
 
  export default {
    data () {
      return {
        userId: parseInt(this.$route.params.userId, 10),
+       createdEntry: null,
        currentUser: null,
        updatingEntry: undefined,
        disposable: new Rx.CompositeDisposable(),
@@ -100,6 +109,14 @@
        return this.$route.params.start
      },
 
+     startMoment () {
+       return moment(this.start).startOf('day')
+     },
+
+     endMoment () {
+       return moment(this.end).endOf('day')
+     },
+
      end () {
        return this.$route.params.end
      },
@@ -111,18 +128,19 @@
      },
 
      filteredEntries () {
-       return _.filter(this.entries, (e) => {
-         const start = moment(this.start)
-         const end = moment(this.end)
-         return moment.utc(e.start).isBetween(start, end) ||
-                moment.utc(e.end).isBetween(start, end)
-       })
+       return _.filter(this.entries, (e) => this.isEntryInCurrentViewingWindow(e))
      }
    },
 
    methods: {
+     isEntryInCurrentViewingWindow (entry) {
+       return moment.utc(entry.start).isBetween(this.startMoment, this.endMoment) ||
+              moment.utc(entry.end).isBetween(this.startMoment, this.endMoment)
+     },
+
      onNewEntry (entry) {
        this.entries.push(entry)
+       this.createdEntry = entry
      },
 
      onUpdatedEntry (entry) {
@@ -134,6 +152,7 @@
      },
 
      updateEntry (entry) {
+       this.createdEntry = null
        this.updatingEntry = entry
        const $form = this.$el.querySelector('.entry-form')
        $form.scrollIntoView && $form.scrollIntoView()
@@ -160,6 +179,18 @@
            params: _.defaults(newParams, this.$route.params)
          })
        }
+     },
+
+     goToRouteForEntry (entry) {
+       if (!_.isObject(entry)) { return }
+       const entryDate = moment.utc(entry.start).local().startOf('day').format('YYYY-MM-DD')
+       this.$route.router.go({
+         name: this.$route.name,
+         params: _.defaults({
+           start: entryDate,
+           end: entryDate
+         }, this.$route.params)
+       })
      },
 
      retrieve () {
@@ -200,7 +231,8 @@
 
    components: { TimesheetListView,
                  EntryForm,
-                 Datepicker },
+                 Datepicker,
+                 SuccessMessage },
 
    filters: { reduceEntriesToDays,
               exportDaysToHTML }
@@ -235,5 +267,4 @@
  .entry-form {
    @include outer-container;
  }
-
 </style>

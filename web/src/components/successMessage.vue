@@ -1,5 +1,5 @@
 <template>
-  <div class="message message-error">
+  <div class="message message-success">
     <slot></slot>
   </div>
 </template>
@@ -8,8 +8,8 @@
  @import 'src/settings';
  @import 'src/mixins';
 
- .message-error {
-   color: red;
-   background-color: tint(red, 92%);
+ .message-success {
+   color: green;
+   background-color: tint(green, 92%);
  }
 </style>
