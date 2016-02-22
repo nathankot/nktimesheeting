@@ -53,13 +53,13 @@
     </menu>
 
     <div class="entry-form">
-      <h2 v-if="!updatingEntry && editable">New entry</h2>
+      <h2 v-if="!updatingEntry && editable">New timesheet entry</h2>
       <entry-form :on-save="onNewEntry"
                   :user-id="userId"
                   v-if="!updatingEntry && editable"
       ></entry-form>
 
-      <h2 v-if="updatingEntry">Edit entry</h2>
+      <h2 v-if="updatingEntry">Edit timesheet entry</h2>
       <entry-form :on-save="onUpdatedEntry"
                   :on-cancel="onCancelUpdate"
                   :entry="updatingEntry"
