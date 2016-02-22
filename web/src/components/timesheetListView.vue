@@ -23,7 +23,10 @@
           </td>
         </tr>
 
-        <tr class="entry" :class="{ 'highlight-red': isEntryPartOfBadDay(entry) }" v-for="entry in sortedEntries">
+        <tr class="entry"
+            :class="{ 'highlight-red': isEntryPartOfBadDay(entry), 
+                      'highlight-green': !isEntryPartOfBadDay(entry) }"
+            v-for="entry in sortedEntries">
           <td>{{ moment.utc(entry.start).local().format(shortDateFormat) }}</td>
           <td>{{ moment.utc(entry.end).local().format(shortDateFormat) }}</td>
           <td>{{ moment.duration(moment(entry.end).diff(moment(entry.start))).format('h[h] m[m]') }}</td>
@@ -101,13 +104,23 @@
      width: em(200);
    }
 
-   tr.highlight-red {
-     background-color: tint(pink, 50%);
-     td {
-       border-bottom: 1px dashed white;
-       border-top: 1px dashed white;
+   tbody {
+     tr.highlight-green, tr.highlight-red {
+       td {
+         border-bottom: 1px dashed white;
+         border-top: 1px dashed white;
+       }
+     }
+
+     tr.highlight-green {
+       background-color: tint(green, 95%);
+     }
+     
+     tr.highlight-red {
+       background-color: tint(pink, 50%);
      }
    }
+
    
    .note-column {
      text-align: left;
