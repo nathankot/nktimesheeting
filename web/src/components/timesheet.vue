@@ -175,9 +175,9 @@
          Api.users.get().rx())
          .subscribeOnNext(({ 0: currentUser, 1: res }) => {
            this.currentUser = currentUser
-           this.viewableUsers = _.filter(res.data.users, (u) => {
-             return u.id !== currentUser.id
-           })
+           this.viewableUsers = _.isObject(currentUser)
+             ? _.filter(res.data.users, (u) => u.id !== currentUser.id)
+             : []
          }))
    },
 
