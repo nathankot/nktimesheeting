@@ -112,7 +112,11 @@
 
    watch: {
      userId: function (userId) {
-       this.entry.userId = userId
+       if (_.isNumber(userId) && userId > 0) {
+         this.entry.userId = userId
+       } else {
+         delete this.entry.userId
+       }
      },
 
      entry (entry) {
