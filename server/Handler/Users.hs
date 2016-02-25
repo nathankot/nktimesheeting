@@ -43,5 +43,5 @@ instance Validatable CreateUserRequest where
 instance FromJSON CreateUserRequest where
   parseJSON = withObject "user" $ \o ->
     CreateUserRequest
-    <$> o .: "email"
+    <$> (toLower <$> o .: "email")
     <*> o .: "password"

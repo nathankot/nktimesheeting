@@ -15,7 +15,7 @@ data SessionRequest = SessionRequest Email Password
 instance FromJSON SessionRequest where
   parseJSON = withObject "session request" $ \o ->
     SessionRequest
-    <$> o .: "email"
+    <$> (toLower <$> o .: "email")
     <*> o .: "password"
 
 data SessionResponse = SessionResponse (Entity User) (Entity ApiKey)
