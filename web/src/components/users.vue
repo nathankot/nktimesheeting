@@ -94,7 +94,7 @@
      deleteUser (user) {
        this.disposable.add(
          Api.users.delete({ id: user.id })
-            .rx()
+           .rx()
            .doOnNext(() => this.users = _.filter(this.users, (u) => u.id !== user.id))
            .subscribeOnError(() => this.refreshSignal.onNext()))
      }
@@ -110,7 +110,7 @@
              .switchLatest())
          .subscribeOnNext(({ 0: currentUser, 1: res }) => {
            this.users = _.filter(res.data.users, (u) => {
-             return u.id !== currentUser.id
+             return _.isObject(currentUser) ? u.id !== currentUser.id : true
            })
          }))
    },
